@@ -1,0 +1,113 @@
+{
+  "nodes": [
+    { "id": "root", "kind": "root", "x": 260, "y": 190 },
+
+    {
+      "id": "blog",
+      "kind": "icon",
+      "shape": "triangle",
+      "orientation": "up",
+      "label": "Blog",
+      "color": "#f27ccf",
+      "x": 170,
+      "y": 210,
+      "labelOffsetY": 28,
+      "labelAnchor": "middle"
+    },
+    {
+      "id": "travel",
+      "kind": "icon",
+      "shape": "triangle",
+      "orientation": "up",
+      "label": "Travel",
+      "color": "#45b5ff",
+      "x": 260,
+      "y": 290,
+      "labelOffsetY": 28,
+      "labelAnchor": "middle"
+    },
+    {
+      "id": "about",
+      "kind": "icon",
+      "shape": "triangle",
+      "orientation": "down",
+      "label": "About",
+      "color": "#4ab247",
+      "x": 320,
+      "y": 110,
+      "labelOffsetY": -24,
+      "labelAnchor": "middle"
+    },
+    {
+      "id": "research",
+      "kind": "icon",
+      "shape": "triangle",
+      "orientation": "up",
+      "label": "Research",
+      "color": "#f2a656",
+      "x": 380,
+      "y": 220,
+      "labelOffsetY": 28,
+      "labelAnchor": "middle"
+    },
+
+    {
+      "id": "mod",
+      "kind": "label",
+      "label": "How to make moderation better.",
+      "x": 610,
+      "y": 290,
+      "labelOffsetY": 0,
+      "labelAnchor": "middle"
+    },
+    {
+      "id": "audit",
+      "kind": "label",
+      "label": "Auditing algorithms and their harms",
+      "x": 720,
+      "y": 170,
+      "labelOffsetY": 0,
+      "labelAnchor": "middle"
+    },
+
+    {
+      "id": "paper1",
+      "kind": "doc",
+      "label": "Are Proactive Interventions for Reddit Communities Feasible?",
+      "x": 1030,
+      "y": 210,
+      "labelOffsetX": 22,
+      "labelOffsetY": 5,
+      "labelAnchor": "start"
+    },
+    {
+      "id": "paper2",
+      "kind": "doc",
+      "label": "Are Proactive Interventions for Reddit Communities Feasible?",
+      "x": 1030,
+      "y": 250,
+      "labelOffsetX": 22,
+      "labelOffsetY": 5,
+      "labelAnchor": "start"
+    },
+    {
+      "id": "paper3",
+      "kind": "doc",
+      "label": "",
+      "x": 1030,
+      "y": 290
+    }
+  ],
+
+  "links": [
+    { "source": "root", "target": "blog" },
+    { "source": "root", "target": "travel" },
+    { "source": "root", "target": "about" },
+    { "source": "root", "target": "research" },
+    { "source": "research", "target": "mod" },
+    { "source": "research", "target": "audit" },
+    { "source": "audit", "target": "paper1" },
+    { "source": "audit", "target": "paper2" },
+    { "source": "audit", "target": "paper3" }
+  ]
+}

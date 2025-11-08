@@ -1,0 +1,84 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont,
+      "Helvetica Neue", Arial, sans-serif;
+    color: #222;
+    background: #ffffff;
+  }
+  
+  .site-header {
+    padding: 16px 32px;
+    font-size: 18px;
+  }
+  
+  #graph-container {
+    height: 380px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    overflow: hidden;
+    cursor: grab;
+  }
+  
+  #graph-container.dragging {
+    cursor: grabbing;
+  }
+  
+  #graph {
+    width: 100%;
+    height: 100%;
+    shape-rendering: geometricPrecision;
+  }
+  
+  /* Edges */
+  .link {
+    stroke: #777;
+    stroke-width: 2;
+    fill: none;
+  }
+  
+  /* Root node */
+  .node-root circle {
+    fill: #f47c30;
+    stroke: none;
+  }
+  
+  /* Icon triangles */
+  .icon-shape {
+    stroke: #111;
+    stroke-width: 1.5;
+  }
+  
+  /* Document icon */
+  .doc-rect {
+    fill: #ffffff;
+    stroke: #777;
+    stroke-width: 1;
+  }
+  
+  .doc-fold,
+  .doc-line {
+    stroke: #777;
+    stroke-width: 1;
+    fill: none;
+  }
+  
+/* Labels */
+.node-label {
+    fill: #222;
+    font-size: 14px;
+    dominant-baseline: hanging; /* works better with tspans */
+    text-anchor: middle;        /* center aligned under the node */
+    pointer-events: none;
+  }
+  
+  /* Small circles for "label" nodes */
+  .node-label-shape {
+    fill: #ffffff;
+    stroke: #777;
+    stroke-width: 1.5;
+  }
+  
