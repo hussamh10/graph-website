@@ -34,29 +34,38 @@ function initGraph(graphData) {
   rootGroup.setAttribute("id", "graph-root");
   svg.appendChild(rootGroup);
 
+  const linkLayer = document.createElementNS(svgNS, "g");
+  linkLayer.setAttribute("class", "link-layer");
+  const nodeLayer = document.createElementNS(svgNS, "g");
+  nodeLayer.setAttribute("class", "node-layer");
+
+  rootGroup.appendChild(linkLayer);
+  rootGroup.appendChild(nodeLayer);
+
   const nodeById = {};
   graphData.nodes.forEach((n) => (nodeById[n.id] = n));
 
-  // Draw links
+  const adjacency = {};
+  const ensureEntry = (id) => {
+    if (!adjacency[id]) {
+      adjacency[id] = new Set();
+    }
+    return adjacency[id];
+  };
+
   graphData.links.forEach((link) => {
-    const s = nodeById[link.source];
-    const t = nodeById[link.target];
-    if (!s || !t) return;
-
-    const path = document.createElementNS(svgNS, "path");
-    path.setAttribute("class", "link");
-
-    const midX = (s.x + t.x) / 2;
-    const d = `M ${s.x} ${s.y} L ${midX} ${s.y} L ${midX} ${t.y} L ${t.x} ${t.y}`;
-    path.setAttribute("d", d);
-
-    rootGroup.appendChild(path);
+    const { source, target } = link;
+    if (!nodeById[source] || !nodeById[target]) return;
+    ensureEntry(source).add(target);
+    ensureEntry(target).add(source);
   });
 
-  // Draw nodes
-  graphData.nodes.forEach((node) => {
+  const visibleNodes = new Set(["root"]);
+
+  function createNodeElement(node) {
     const g = document.createElementNS(svgNS, "g");
     g.setAttribute("transform", `translate(${node.x},${node.y})`);
+    g.classList.add("graph-node");
 
     let halfHeight = 0; // vertical half-size of shape (for label placement)
 
@@ -132,7 +141,6 @@ function initGraph(graphData) {
       g.appendChild(circle);
     }
 
-    // Bottom-centered wrapped text for EVERY node
     if (node.label && node.label.trim().length > 0) {
       const lines = wrapLabel(node.label, 50);
       const text = document.createElementNS(svgNS, "text");
@@ -153,8 +161,62 @@ function initGraph(graphData) {
       g.appendChild(text);
     }
 
-    rootGroup.appendChild(g);
-  });
+    g.addEventListener("pointerdown", (event) => {
+      event.stopPropagation();
+    });
+
+    g.addEventListener("click", (event) => {
+      event.stopPropagation();
+      revealNeighbors(node.id);
+    });
+
+    return g;
+  }
+
+  function createLinkElement(sourceNode, targetNode) {
+    const path = document.createElementNS(svgNS, "path");
+    path.setAttribute("class", "link");
+
+    const midX = (sourceNode.x + targetNode.x) / 2;
+    const d = `M ${sourceNode.x} ${sourceNode.y} L ${midX} ${sourceNode.y} L ${midX} ${targetNode.y} L ${targetNode.x} ${targetNode.y}`;
+    path.setAttribute("d", d);
+
+    return path;
+  }
+
+  function renderGraph() {
+    while (linkLayer.firstChild) {
+      linkLayer.removeChild(linkLayer.firstChild);
+    }
+    while (nodeLayer.firstChild) {
+      nodeLayer.removeChild(nodeLayer.firstChild);
+    }
+
+    graphData.links.forEach((link) => {
+      const { source, target } = link;
+      if (!visibleNodes.has(source) || !visibleNodes.has(target)) return;
+
+      const sourceNode = nodeById[source];
+      const targetNode = nodeById[target];
+      if (!sourceNode || !targetNode) return;
+
+      linkLayer.appendChild(createLinkElement(sourceNode, targetNode));
+    });
+
+    graphData.nodes.forEach((node) => {
+      if (!visibleNodes.has(node.id)) return;
+      nodeLayer.appendChild(createNodeElement(node));
+    });
+  }
+
+  function revealNeighbors(nodeId) {
+    const neighbors = adjacency[nodeId];
+    if (!neighbors) return;
+    neighbors.forEach((neighborId) => visibleNodes.add(neighborId));
+    renderGraph();
+  }
+
+  renderGraph();
 
   // Panning
   const container = document.getElementById("graph-container");

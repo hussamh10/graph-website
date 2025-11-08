@@ -32,6 +32,10 @@
     height: 100%;
     shape-rendering: geometricPrecision;
   }
+
+  .graph-node {
+    cursor: pointer;
+  }
   
   /* Edges */
   .link {
