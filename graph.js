@@ -140,7 +140,9 @@ function initGraph(graphData) {
   const svg = document.getElementById("graph");
   const detailTitle = document.getElementById("detail-title");
   const detailContent = document.getElementById("detail-content");
+  const container = document.getElementById("graph-container");
   const svgNS = "http://www.w3.org/2000/svg";
+  const viewBox = svg.viewBox.baseVal;
 
   const rootGroup = document.createElementNS(svgNS, "g");
   rootGroup.setAttribute("id", "graph-root");
@@ -174,6 +176,24 @@ function initGraph(graphData) {
 
   const visibleNodes = new Set(["root"]);
   let activeNodeId = null;
+  let isPanning = false;
+  let startX = 0;
+  let startY = 0;
+  let currentX = 0;
+  let currentY = 0;
+
+  const applyTranslation = (x, y) => {
+    currentX = x;
+    currentY = y;
+    rootGroup.setAttribute("transform", `translate(${x},${y})`);
+  };
+
+  const centerOnNode = (node) => {
+    if (!node || !viewBox) return;
+    const targetX = viewBox.x + viewBox.width / 2 - node.x;
+    const targetY = viewBox.y + viewBox.height / 2 - node.y;
+    applyTranslation(targetX, targetY);
+  };
 
   function getNodePadding(node) {
     switch (node.kind) {
@@ -203,6 +223,8 @@ function initGraph(graphData) {
     } else {
       detailContent.innerHTML = markdownToHtml(node.content || "");
     }
+
+    centerOnNode(node);
   }
 
   function createNodeElement(node) {
@@ -382,23 +404,6 @@ function initGraph(graphData) {
   renderGraph();
   showNodeDetail("root");
 
-  const container = document.getElementById("graph-container");
-  let isPanning = false;
-  let startX = 0;
-  let startY = 0;
-  let currentX = 0;
-  let currentY = 0;
-
-  const xValues = graphData.nodes.map((n) => n.x);
-  const yValues = graphData.nodes.map((n) => n.y);
-  const minX = Math.min(...xValues);
-  const minY = Math.min(...yValues);
-  const initialPadding = 40;
-
-  currentX = initialPadding - minX;
-  currentY = initialPadding - minY;
-  rootGroup.setAttribute("transform", `translate(${currentX},${currentY})`);
-
   function pointerDown(e) {
     if (e.button !== 0) return;
     isPanning = true;
@@ -437,4 +442,10 @@ function initGraph(graphData) {
   container.addEventListener("pointermove", pointerMove);
   container.addEventListener("pointerup", pointerUp);
   container.addEventListener("pointercancel", pointerUp);
+
+  window.addEventListener("resize", () => {
+    if (activeNodeId) {
+      centerOnNode(nodeById[activeNodeId]);
+    }
+  });
 }

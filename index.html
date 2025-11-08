@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Hussam Habib</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -11,9 +12,24 @@
   </header>
 
   <main class="site-main">
-    <div id="graph-container">
-      <svg id="graph" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="crt-column">
+      <div class="crt-wrapper">
+        <div class="crt-screen">
+          <div class="crt-inner">
+            <div id="graph-container">
+              <svg
+                id="graph"
+                viewBox="0 0 1600 900"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="xMidYMid meet"
+              ></svg>
+            </div>
+          </div>
+          <div class="scanlines" aria-hidden="true"></div>
+        </div>
+      </div>
     </div>
+
     <aside id="detail-panel" aria-live="polite">
       <div id="detail-panel-inner">
         <h2 id="detail-title">Select a node</h2>
