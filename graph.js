@@ -26,8 +26,120 @@ function wrapLabel(text, maxChars = 50) {
   return lines;
 }
 
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function formatInlineMarkdown(text) {
+  let escaped = escapeHtml(text);
+  escaped = escaped.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  escaped = escaped.replace(/__(.+?)__/g, "<strong>$1</strong>");
+  escaped = escaped.replace(/\*(.+?)\*/g, "<em>$1</em>");
+  escaped = escaped.replace(/_(.+?)_/g, "<em>$1</em>");
+  escaped = escaped.replace(/`([^`]+)`/g, "<code>$1</code>");
+  return escaped;
+}
+
+function markdownToHtml(markdown) {
+  if (!markdown) return "";
+
+  const lines = markdown.replace(/\r\n?/g, "\n").split("\n");
+  const html = [];
+  let inUl = false;
+  let inOl = false;
+  let inBlockquote = false;
+
+  const closeLists = () => {
+    if (inUl) {
+      html.push("</ul>");
+      inUl = false;
+    }
+    if (inOl) {
+      html.push("</ol>");
+      inOl = false;
+    }
+  };
+
+  const closeBlockquote = () => {
+    if (inBlockquote) {
+      html.push("</blockquote>");
+      inBlockquote = false;
+    }
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    if (!line) {
+      closeLists();
+      closeBlockquote();
+      continue;
+    }
+
+    const headingMatch = line.match(/^(#{1,3})\s+(.*)$/);
+    if (headingMatch) {
+      closeLists();
+      const level = headingMatch[1].length;
+      const tag = `h${level}`;
+      html.push(`<${tag}>${formatInlineMarkdown(headingMatch[2])}</${tag}>`);
+      continue;
+    }
+
+    if (line.startsWith(">")) {
+      closeLists();
+      const content = formatInlineMarkdown(line.replace(/^>\s?/, ""));
+      if (!inBlockquote) {
+        html.push("<blockquote>");
+        inBlockquote = true;
+      }
+      html.push(`<p>${content}</p>`);
+      continue;
+    }
+
+    const unorderedMatch = line.match(/^[*-]\s+(.*)$/);
+    if (unorderedMatch) {
+      closeBlockquote();
+      if (!inUl) {
+        closeLists();
+        html.push("<ul>");
+        inUl = true;
+      }
+      html.push(`<li>${formatInlineMarkdown(unorderedMatch[1])}</li>`);
+      continue;
+    }
+
+    const orderedMatch = line.match(/^\d+\.\s+(.*)$/);
+    if (orderedMatch) {
+      closeBlockquote();
+      if (!inOl) {
+        closeLists();
+        html.push("<ol>");
+        inOl = true;
+      }
+      html.push(`<li>${formatInlineMarkdown(orderedMatch[1])}</li>`);
+      continue;
+    }
+
+    closeLists();
+    closeBlockquote();
+    html.push(`<p>${formatInlineMarkdown(line)}</p>`);
+  }
+
+  closeLists();
+  closeBlockquote();
+
+  return html.join("");
+}
+
 function initGraph(graphData) {
   const svg = document.getElementById("graph");
+  const detailTitle = document.getElementById("detail-title");
+  const detailContent = document.getElementById("detail-content");
   const svgNS = "http://www.w3.org/2000/svg";
 
   const rootGroup = document.createElementNS(svgNS, "g");
@@ -61,13 +173,44 @@ function initGraph(graphData) {
   });
 
   const visibleNodes = new Set(["root"]);
+  let activeNodeId = null;
+
+  function getNodePadding(node) {
+    switch (node.kind) {
+      case "root":
+        return 18;
+      case "icon":
+        return 16;
+      case "doc":
+        return 18;
+      case "label":
+        return 14;
+      default:
+        return 12;
+    }
+  }
+
+  function showNodeDetail(nodeId) {
+    const node = nodeById[nodeId];
+    if (!node) return;
+    activeNodeId = nodeId;
+
+    const title = node.title || node.label || node.id;
+    detailTitle.textContent = title;
+
+    if (node.contentType === "html") {
+      detailContent.innerHTML = node.content || "";
+    } else {
+      detailContent.innerHTML = markdownToHtml(node.content || "");
+    }
+  }
 
   function createNodeElement(node) {
     const g = document.createElementNS(svgNS, "g");
     g.setAttribute("transform", `translate(${node.x},${node.y})`);
     g.classList.add("graph-node");
 
-    let halfHeight = 0; // vertical half-size of shape (for label placement)
+    let halfHeight = 0;
 
     if (node.kind === "root") {
       const r = 14;
@@ -126,14 +269,21 @@ function initGraph(graphData) {
 
       const line2 = document.createElementNS(svgNS, "line");
       line2.setAttribute("x1", -w / 2 + 2);
-      line2.setAttribute("y1", 2);
+      line2.setAttribute("y1", 1);
       line2.setAttribute("x2", w / 2 - 2);
-      line2.setAttribute("y2", 2);
+      line2.setAttribute("y2", 1);
       line2.setAttribute("class", "doc-line");
       g.appendChild(line2);
+
+      const line3 = document.createElementNS(svgNS, "line");
+      line3.setAttribute("x1", -w / 2 + 2);
+      line3.setAttribute("y1", 4);
+      line3.setAttribute("x2", w / 2 - 2);
+      line3.setAttribute("y2", 4);
+      line3.setAttribute("class", "doc-line");
+      g.appendChild(line3);
     } else if (node.kind === "label") {
-      // previously text-only → now a small circle
-      const r = 6;
+      const r = 10;
       halfHeight = r;
       const circle = document.createElementNS(svgNS, "circle");
       circle.setAttribute("r", r);
@@ -147,7 +297,7 @@ function initGraph(graphData) {
       text.setAttribute("class", "node-label");
       text.setAttribute("text-anchor", "middle");
 
-      const baseY = halfHeight + 18; // distance under the shape
+      const baseY = halfHeight + 18;
       const lineHeight = 16;
 
       lines.forEach((line, i) => {
@@ -161,13 +311,10 @@ function initGraph(graphData) {
       g.appendChild(text);
     }
 
-    g.addEventListener("pointerdown", (event) => {
-      event.stopPropagation();
-    });
-
     g.addEventListener("click", (event) => {
       event.stopPropagation();
       revealNeighbors(node.id);
+      showNodeDetail(node.id);
     });
 
     return g;
@@ -177,9 +324,19 @@ function initGraph(graphData) {
     const path = document.createElementNS(svgNS, "path");
     path.setAttribute("class", "link");
 
-    const midX = (sourceNode.x + targetNode.x) / 2;
-    const d = `M ${sourceNode.x} ${sourceNode.y} L ${midX} ${sourceNode.y} L ${midX} ${targetNode.y} L ${targetNode.x} ${targetNode.y}`;
-    path.setAttribute("d", d);
+    const dx = targetNode.x - sourceNode.x;
+    const dy = targetNode.y - sourceNode.y;
+    const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+
+    const startPadding = getNodePadding(sourceNode);
+    const endPadding = getNodePadding(targetNode);
+
+    const startX = sourceNode.x + (dx / distance) * startPadding;
+    const startY = sourceNode.y + (dy / distance) * startPadding;
+    const endX = targetNode.x - (dx / distance) * endPadding;
+    const endY = targetNode.y - (dy / distance) * endPadding;
+
+    path.setAttribute("d", `M ${startX} ${startY} L ${endX} ${endY}`);
 
     return path;
   }
@@ -207,6 +364,10 @@ function initGraph(graphData) {
       if (!visibleNodes.has(node.id)) return;
       nodeLayer.appendChild(createNodeElement(node));
     });
+
+    if (!activeNodeId || !visibleNodes.has(activeNodeId)) {
+      showNodeDetail("root");
+    }
   }
 
   function revealNeighbors(nodeId) {
@@ -217,8 +378,8 @@ function initGraph(graphData) {
   }
 
   renderGraph();
+  showNodeDetail("root");
 
-  // Panning
   const container = document.getElementById("graph-container");
   let isPanning = false;
   let startX = 0;
@@ -226,10 +387,22 @@ function initGraph(graphData) {
   let currentX = 0;
   let currentY = 0;
 
+  const xValues = graphData.nodes.map((n) => n.x);
+  const yValues = graphData.nodes.map((n) => n.y);
+  const minX = Math.min(...xValues);
+  const minY = Math.min(...yValues);
+  const initialPadding = 40;
+
+  currentX = initialPadding - minX;
+  currentY = initialPadding - minY;
+  rootGroup.setAttribute("transform", `translate(${currentX},${currentY})`);
+
   function pointerDown(e) {
+    if (e.button !== 0) return;
     isPanning = true;
     startX = e.clientX;
     startY = e.clientY;
+    container.setPointerCapture(e.pointerId);
     container.classList.add("dragging");
   }
 
@@ -251,10 +424,15 @@ function initGraph(graphData) {
     currentY += dy;
     isPanning = false;
     container.classList.remove("dragging");
+    try {
+      container.releasePointerCapture(e.pointerId);
+    } catch (err) {
+      // ignore
+    }
   }
 
   container.addEventListener("pointerdown", pointerDown);
-  window.addEventListener("pointermove", pointerMove);
-  window.addEventListener("pointerup", pointerUp);
-  window.addEventListener("pointercancel", pointerUp);
+  container.addEventListener("pointermove", pointerMove);
+  container.addEventListener("pointerup", pointerUp);
+  container.addEventListener("pointercancel", pointerUp);
 }

@@ -10,10 +10,16 @@
     <h1>Hussam Habib</h1>
   </header>
 
-  <main>
+  <main class="site-main">
     <div id="graph-container">
-      <svg id="graph" viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg"></svg>
+      <svg id="graph" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
+    <aside id="detail-panel" aria-live="polite">
+      <div id="detail-panel-inner">
+        <h2 id="detail-title">Select a node</h2>
+        <div id="detail-content"></div>
+      </div>
+    </aside>
   </main>
 
   <script src="graph.js"></script>
