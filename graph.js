@@ -172,19 +172,23 @@ function initGraph(graphData) {
     ensureEntry(target).add(source);
   });
 
-  const visibleNodes = new Set(["root"]);
+  const visibleNodes = new Set(graphData.nodes.map((node) => node.id));
   let activeNodeId = null;
 
   function getNodePadding(node) {
+    if (node.padding != null) {
+      return node.padding;
+    }
+
     switch (node.kind) {
       case "root":
-        return 18;
+        return 22;
       case "icon":
-        return 16;
+        return 20;
       case "doc":
         return 18;
       case "label":
-        return 14;
+        return 8;
       default:
         return 12;
     }
@@ -213,7 +217,7 @@ function initGraph(graphData) {
     let halfHeight = 0;
 
     if (node.kind === "root") {
-      const r = 14;
+      const r = node.size || 16;
       halfHeight = r;
       const circle = document.createElementNS(svgNS, "circle");
       circle.setAttribute("r", r);
@@ -221,24 +225,105 @@ function initGraph(graphData) {
       g.classList.add("node-root");
       g.appendChild(circle);
     } else if (node.kind === "icon") {
-      const size = 22;
+      const size = node.size || 30;
       halfHeight = size / 2;
-      const poly = document.createElementNS(svgNS, "polygon");
-      let points;
+      const fillColor = node.color || "#ddd";
 
-      if (node.orientation === "down") {
-        points = `0,${size / 2} ${-size / 2},${-size / 2} ${size / 2},${-size / 2}`;
-      } else {
-        points = `0,${-size / 2} ${-size / 2},${size / 2} ${size / 2},${size / 2}`;
+      switch (node.shape) {
+        case "plus": {
+          const square = document.createElementNS(svgNS, "rect");
+          square.setAttribute("x", -size / 2);
+          square.setAttribute("y", -size / 2);
+          square.setAttribute("width", size);
+          square.setAttribute("height", size);
+          square.setAttribute("rx", 6);
+          square.setAttribute("ry", 6);
+          square.setAttribute("fill", fillColor);
+          square.classList.add("icon-solid");
+          g.appendChild(square);
+
+          const plusThickness = size * 0.18;
+
+          const vLine = document.createElementNS(svgNS, "rect");
+          vLine.setAttribute("x", -plusThickness / 2);
+          vLine.setAttribute("y", -size / 2 + size * 0.18);
+          vLine.setAttribute("width", plusThickness);
+          vLine.setAttribute("height", size - size * 0.36);
+          vLine.setAttribute("fill", "#1f1b16");
+          g.appendChild(vLine);
+
+          const hLine = document.createElementNS(svgNS, "rect");
+          hLine.setAttribute("x", -size / 2 + size * 0.18);
+          hLine.setAttribute("y", -plusThickness / 2);
+          hLine.setAttribute("width", size - size * 0.36);
+          hLine.setAttribute("height", plusThickness);
+          hLine.setAttribute("fill", "#1f1b16");
+          g.appendChild(hLine);
+          break;
+        }
+        case "diamond": {
+          const polygon = document.createElementNS(svgNS, "polygon");
+          polygon.setAttribute(
+            "points",
+            `0,${-size / 2} ${size / 2},0 0,${size / 2} ${-size / 2},0`
+          );
+          polygon.setAttribute("fill", fillColor);
+          polygon.classList.add("icon-solid");
+          g.appendChild(polygon);
+          break;
+        }
+        case "hex": {
+          const r = size / 2;
+          const points = [];
+          for (let i = 0; i < 6; i += 1) {
+            const angle = (Math.PI / 3) * i + Math.PI / 6;
+            const x = Math.cos(angle) * r;
+            const y = Math.sin(angle) * r;
+            points.push(`${x},${y}`);
+          }
+          const polygon = document.createElementNS(svgNS, "polygon");
+          polygon.setAttribute("points", points.join(" "));
+          polygon.setAttribute("fill", fillColor);
+          polygon.classList.add("icon-solid");
+          g.appendChild(polygon);
+          break;
+        }
+        case "circle": {
+          const circle = document.createElementNS(svgNS, "circle");
+          circle.setAttribute("r", size / 2);
+          circle.setAttribute("fill", fillColor);
+          circle.classList.add("icon-solid");
+          g.appendChild(circle);
+          break;
+        }
+        case "triangle": {
+          const polygon = document.createElementNS(svgNS, "polygon");
+          let points;
+          if (node.orientation === "down") {
+            points = `0,${size / 2} ${-size / 2},${-size / 2} ${size / 2},${-size / 2}`;
+          } else {
+            points = `0,${-size / 2} ${-size / 2},${size / 2} ${size / 2},${size / 2}`;
+          }
+          polygon.setAttribute("points", points);
+          polygon.setAttribute("fill", fillColor);
+          polygon.classList.add("icon-solid");
+          g.appendChild(polygon);
+          break;
+        }
+        default: {
+          const polygon = document.createElementNS(svgNS, "rect");
+          polygon.setAttribute("x", -size / 2);
+          polygon.setAttribute("y", -size / 2);
+          polygon.setAttribute("width", size);
+          polygon.setAttribute("height", size);
+          polygon.setAttribute("fill", fillColor);
+          polygon.classList.add("icon-solid");
+          g.appendChild(polygon);
+        }
       }
-
-      poly.setAttribute("points", points);
-      poly.setAttribute("class", "icon-shape");
-      poly.setAttribute("fill", node.color || "#ddd");
-      g.appendChild(poly);
     } else if (node.kind === "doc") {
-      const w = 16;
-      const h = 20;
+      const w = node.width || 20;
+      const h = node.height || 26;
       halfHeight = h / 2;
 
       const rect = document.createElementNS(svgNS, "rect");
@@ -246,67 +331,108 @@ function initGraph(graphData) {
       rect.setAttribute("y", -h / 2);
       rect.setAttribute("width", w);
       rect.setAttribute("height", h);
-      rect.setAttribute("rx", 2);
-      rect.setAttribute("ry", 2);
+      rect.setAttribute("rx", 3);
+      rect.setAttribute("ry", 3);
+      if (node.color) {
+        rect.setAttribute("fill", node.color);
+      }
       rect.setAttribute("class", "doc-rect");
       g.appendChild(rect);
 
       const fold = document.createElementNS(svgNS, "polyline");
       fold.setAttribute(
         "points",
-        `${0},${-h / 2} ${w / 2 - 3},${-h / 2} ${w / 2 - 3},${-h / 2 + 5}`
+        `${-w / 2 + 6},${-h / 2 + 2} ${w / 2 - 6},${-h / 2 + 2} ${w / 2 - 6},${-h / 2 + 8}`
       );
       fold.setAttribute("class", "doc-fold");
       g.appendChild(fold);
 
       const line1 = document.createElementNS(svgNS, "line");
-      line1.setAttribute("x1", -w / 2 + 2);
+      line1.setAttribute("x1", -w / 2 + 4);
       line1.setAttribute("y1", -2);
-      line1.setAttribute("x2", w / 2 - 2);
+      line1.setAttribute("x2", w / 2 - 4);
       line1.setAttribute("y2", -2);
       line1.setAttribute("class", "doc-line");
       g.appendChild(line1);
 
       const line2 = document.createElementNS(svgNS, "line");
-      line2.setAttribute("x1", -w / 2 + 2);
-      line2.setAttribute("y1", 1);
-      line2.setAttribute("x2", w / 2 - 2);
-      line2.setAttribute("y2", 1);
+      line2.setAttribute("x1", -w / 2 + 4);
+      line2.setAttribute("y1", 2);
+      line2.setAttribute("x2", w / 2 - 4);
+      line2.setAttribute("y2", 2);
       line2.setAttribute("class", "doc-line");
       g.appendChild(line2);
 
       const line3 = document.createElementNS(svgNS, "line");
-      line3.setAttribute("x1", -w / 2 + 2);
-      line3.setAttribute("y1", 4);
-      line3.setAttribute("x2", w / 2 - 2);
-      line3.setAttribute("y2", 4);
+      line3.setAttribute("x1", -w / 2 + 4);
+      line3.setAttribute("y1", 6);
+      line3.setAttribute("x2", w / 2 - 4);
+      line3.setAttribute("y2", 6);
       line3.setAttribute("class", "doc-line");
       g.appendChild(line3);
     } else if (node.kind === "label") {
-      const r = 10;
-      halfHeight = r;
-      const circle = document.createElementNS(svgNS, "circle");
-      circle.setAttribute("r", r);
-      circle.setAttribute("class", "node-label-shape");
-      g.appendChild(circle);
+      halfHeight = 0;
     }
 
     if (node.label && node.label.trim().length > 0) {
-      const lines = wrapLabel(node.label, 50);
+      const wrapWidth = node.labelMaxChars || 50;
+      const lines = wrapLabel(node.label, wrapWidth);
       const text = document.createElementNS(svgNS, "text");
       text.setAttribute("class", "node-label");
-      text.setAttribute("text-anchor", "middle");
+      const textAnchor = node.labelAnchor || "start";
+      text.setAttribute("text-anchor", textAnchor);
 
-      const baseY = halfHeight + 18;
-      const lineHeight = 16;
+      const baseline = node.labelBaseline || "hanging";
+      text.setAttribute("dominant-baseline", baseline);
+
+      const offsetX = node.labelOffsetX != null ? node.labelOffsetX : 0;
+      const lineHeight = node.labelLineHeight || 20;
+      let baseY;
+
+      if (node.labelOffsetY != null) {
+        baseY = node.labelOffsetY;
+      } else if (baseline === "middle") {
+        baseY = 0;
+      } else {
+        baseY = halfHeight + 20;
+      }
+
+      const startY =
+        baseline === "middle"
+          ? baseY - ((lines.length - 1) * lineHeight) / 2
+          : baseY;
 
       lines.forEach((line, i) => {
         const tspan = document.createElementNS(svgNS, "tspan");
-        tspan.setAttribute("x", 0);
-        tspan.setAttribute("y", baseY + i * lineHeight);
+        tspan.setAttribute("x", offsetX);
+        tspan.setAttribute("y", startY + i * lineHeight);
         tspan.textContent = line;
         text.appendChild(tspan);
       });
+
+      if (node.labelFontSize) {
+        text.style.fontSize = `${node.labelFontSize}px`;
+      }
+
+      if (node.labelFontWeight) {
+        text.style.fontWeight = node.labelFontWeight;
+      }
+
+      if (node.labelLetterSpacing) {
+        text.style.letterSpacing = node.labelLetterSpacing;
+      }
+
+      if (node.labelColor) {
+        text.setAttribute("fill", node.labelColor);
+      }
+
+      if (node.labelClass) {
+        text.classList.add(node.labelClass);
+      } else if (node.kind === "label") {
+        text.classList.add("node-label-secondary");
+      } else if (node.kind === "doc") {
+        text.classList.add("node-label-tertiary");
+      }
 
       g.appendChild(text);
     }
