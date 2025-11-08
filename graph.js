@@ -336,7 +336,9 @@ function initGraph(graphData) {
     const endX = targetNode.x - (dx / distance) * endPadding;
     const endY = targetNode.y - (dy / distance) * endPadding;
 
-    path.setAttribute("d", `M ${startX} ${startY} L ${endX} ${endY}`);
+    // Create squared/angled path: go horizontal first, then vertical
+    const midX = startX + (endX - startX) * 0.5;
+    path.setAttribute("d", `M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${endX} ${endY}`);
 
     return path;
   }
