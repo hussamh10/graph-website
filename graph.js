@@ -416,11 +416,13 @@ function initGraph(graphData) {
     activeNodeId = nodeId;
 
     const title = node.title || node.label || node.id;
+    const isPanelContent = node.contentType === "panel";
     const isHtmlContent = node.contentType === "html";
-    detailPanel.classList.toggle("detail-panel--plain", isHtmlContent);
-    detailTitle.textContent = isHtmlContent ? "" : title;
+    const usePlainLayout = isPanelContent || isHtmlContent;
+    detailPanel.classList.toggle("detail-panel--plain", usePlainLayout);
+    detailTitle.textContent = usePlainLayout ? "" : title;
 
-    if (node.contentType === "panel") {
+    if (isPanelContent) {
       const panelId = node.panelId || node.id;
       panelManager.loadPanel(panelId, node);
     } else {

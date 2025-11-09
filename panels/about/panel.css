@@ -1,175 +1,117 @@
 .about-panel .panel-surface {
-  --panel-tilt-x: 0deg;
-  --panel-tilt-y: 0deg;
-  background: linear-gradient(135deg, #fdfaf2 0%, #f1e5cd 100%);
-  padding: 34px 28px 36px;
-  min-height: 320px;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0;
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 24px;
-  transform: perspective(1200px) rotateX(var(--panel-tilt-x)) rotateY(var(--panel-tilt-y));
-  transition: transform 160ms ease-out;
+  gap: 12px;
+  height: auto;
+  max-height: 100%;
+  overflow: visible;
 }
 
+/* Text Card */
 .about-panel .about-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(1.2px);
-  border-radius: 18px;
-  padding: 22px 22px 20px;
-  box-shadow: 0 12px 28px rgba(34, 35, 58, 0.18);
-  max-width: 230px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(2px);
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(34, 35, 58, 0.15);
+  width: 100%;
+  max-width: 240px;
   transform: rotate(-1.5deg);
+  position: relative;
   z-index: 2;
 }
 
 .about-panel .about-card h3 {
-  margin: 0 0 10px;
-  font-size: 19px;
+  margin: 0 0 8px;
+  font-size: 17px;
   letter-spacing: 0.01em;
   color: #3b3126;
 }
 
 .about-panel .about-card p {
-  margin: 0 0 14px;
-  font-size: 14px;
-  line-height: 1.55;
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.5;
   color: #4c4032;
 }
 
 .about-panel .about-card ul {
   margin: 0;
   padding-left: 18px;
-  font-size: 13px;
+  font-size: 12px;
   color: #5b4a38;
+  line-height: 1.4;
 }
 
 .about-panel .about-card li {
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
+/* Picture Card - Behind text, peeking on right */
 .about-panel .about-polaroid {
   position: absolute;
-  top: 32px;
-  right: 26px;
-  width: 148px;
-  transform: rotate(7deg);
-  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.28));
-  pointer-events: none;
+  top: 40px;
+  right: -40px;
+  width: 160px;
+  transform: rotate(6deg);
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
+  z-index: 1;
 }
 
 .about-panel .polaroid-frame {
   background: #ffffff;
-  border-radius: 14px;
-  padding: 14px 14px 20px;
+  border-radius: 12px;
+  padding: 12px 12px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .about-panel .polaroid-image {
   width: 100%;
-  height: 102px;
-  border-radius: 10px;
-  background: linear-gradient(160deg, #002f4b 0%, #146eb4 48%, #ffb347 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.about-panel .polaroid-image::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.3), transparent 58%);
+  height: auto;
+  max-height: 120px;
+  border-radius: 8px;
+  display: block;
+  object-fit: cover;
 }
 
 .about-panel .polaroid-caption {
   margin: 0;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #7b6652;
 }
 
+/* Map Card - Below text */
 .about-panel .about-map {
-  margin-top: auto;
-  padding-top: 8px;
+  width: 100%;
+  margin-top: 80px;
 }
 
 .about-panel .map-card {
-  background: rgba(24, 28, 47, 0.94);
-  border-radius: 16px;
-  padding: 18px 18px 20px;
-  color: #f8f8f8;
-  transform: rotate(-0.9deg);
-  box-shadow: 0 16px 30px rgba(17, 23, 41, 0.32);
-  display: grid;
-  gap: 14px;
+  background: rgba(24, 28, 47, 0.95);
+  border-radius: 10px;
+  padding: 14px;
+  transform: rotate(1.2deg);
+  box-shadow: 0 8px 24px rgba(17, 23, 41, 0.3);
 }
 
 .about-panel .map-header {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.about-panel .map-header span {
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(248, 248, 248, 0.6);
-}
-
-.about-panel .map-header strong {
-  font-size: 16px;
-  letter-spacing: 0.05em;
+  display: none;
 }
 
 .about-panel .map-illustration {
   width: 100%;
   height: auto;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
-}
-
-.about-panel .map-water {
-  fill: #1b3258;
-}
-
-.about-panel .map-coast {
-  fill: #f5c27f;
-}
-
-.about-panel .map-river {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.5);
-  stroke-width: 2.4;
-  stroke-linecap: round;
-}
-
-.about-panel .map-marker {
-  fill: #ff7755;
-  opacity: 0.9;
-}
-
-.about-panel .map-marker-core {
-  fill: #ffeede;
-}
-
-@media (max-width: 480px) {
-  .about-panel .panel-surface {
-    min-height: 280px;
-  }
-
-  .about-panel .about-polaroid {
-    right: 12px;
-    top: 28px;
-    width: 128px;
-  }
-
-  .about-panel .about-card {
-    max-width: 210px;
-  }
+  max-height: 100px;
+  border-radius: 8px;
+  display: block;
+  object-fit: cover;
 }

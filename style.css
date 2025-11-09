@@ -51,14 +51,14 @@ body {
 }
 
 #detail-panel {
-  width: 360px;
-  max-width: 40vw;
-  max-height: 60vh;
+  width: 50vw;
+  max-width: 50vw;
+  max-height: 80vh;
   border-left: 1px solid #eee;
   background: #ffffff;
   padding: 24px;
   overflow-y: auto;
-  margin-right: 132px;
+  margin-right: 32px;
   margin-top: 32px;
 }
 
@@ -116,10 +116,9 @@ body {
 
 #detail-content .panel-surface {
   position: relative;
-  background: #ffffff;
-  border-radius: 18px;
+  border-radius: 4px;
+  max-height: 100vh;
   padding: 28px;
-  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.16);
   overflow: hidden;
 }
 
