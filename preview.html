@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Panel Preview · Hussam Habib</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="preview.css" />
+</head>
+<body class="preview-page">
+  <header class="site-header preview-header">
+    <h1>Panel preview</h1>
+    <p class="preview-subtitle">Test how custom panels render inside the detail view shell.</p>
+  </header>
+
+  <main class="preview-main">
+    <section class="preview-controls" aria-label="Panel controls">
+      <div class="control-group">
+        <label class="control-label" for="panel-select">Panel</label>
+        <select id="panel-select" class="control-select">
+          <option value="">Select a panel…</option>
+        </select>
+      </div>
+      <div class="control-actions">
+        <button type="button" id="reload-panel" class="control-button" disabled>Reload panel</button>
+        <button type="button" id="clear-panel" class="control-button control-button--ghost">Clear</button>
+      </div>
+      <dl class="panel-meta" id="panel-meta" aria-live="polite">
+        <div>
+          <dt>Panel ID</dt>
+          <dd id="panel-meta-id">—</dd>
+        </div>
+        <div>
+          <dt>Title</dt>
+          <dd id="panel-meta-title">—</dd>
+        </div>
+      </dl>
+      <p class="panel-status" id="panel-status" role="status">Choose a panel to start the preview.</p>
+    </section>
+
+    <section class="preview-stage" aria-label="Panel preview">
+      <div class="preview-device">
+        <div class="preview-device-screen">
+          <aside id="detail-panel">
+            <div id="detail-panel-inner">
+              <h2 id="detail-title">Panel preview</h2>
+              <div id="detail-content">
+                <p class="preview-placeholder">Select a panel from the list to load it inside this fixed-size preview.</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="panel-manager.js"></script>
+  <script src="panel-preview.js"></script>
+</body>
+</html>
