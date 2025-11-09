@@ -211,6 +211,11 @@ function initGraph(graphData) {
     g.classList.add("graph-node");
 
     let halfHeight = 0;
+    
+    // Random rotation for shapes (between -8 and 8 degrees)
+    const randomRotation = (Math.random() - 0.5) * 16;
+    const shapeGroup = document.createElementNS(svgNS, "g");
+    shapeGroup.setAttribute("transform", `rotate(${randomRotation})`);
 
     if (node.kind === "root") {
       const r = 14;
@@ -219,7 +224,7 @@ function initGraph(graphData) {
       circle.setAttribute("r", r);
       circle.classList.add("node-root-circle");
       g.classList.add("node-root");
-      g.appendChild(circle);
+      shapeGroup.appendChild(circle);
     } else if (node.kind === "icon") {
       const size = 22;
       halfHeight = size / 2;
@@ -235,7 +240,7 @@ function initGraph(graphData) {
       poly.setAttribute("points", points);
       poly.setAttribute("class", "icon-shape");
       poly.setAttribute("fill", node.color || "#ddd");
-      g.appendChild(poly);
+      shapeGroup.appendChild(poly);
     } else if (node.kind === "doc") {
       const w = 16;
       const h = 20;
@@ -249,7 +254,7 @@ function initGraph(graphData) {
       rect.setAttribute("rx", 2);
       rect.setAttribute("ry", 2);
       rect.setAttribute("class", "doc-rect");
-      g.appendChild(rect);
+      shapeGroup.appendChild(rect);
 
       const fold = document.createElementNS(svgNS, "polyline");
       fold.setAttribute(
@@ -257,7 +262,7 @@ function initGraph(graphData) {
         `${0},${-h / 2} ${w / 2 - 3},${-h / 2} ${w / 2 - 3},${-h / 2 + 5}`
       );
       fold.setAttribute("class", "doc-fold");
-      g.appendChild(fold);
+      shapeGroup.appendChild(fold);
 
       const line1 = document.createElementNS(svgNS, "line");
       line1.setAttribute("x1", -w / 2 + 2);
@@ -265,7 +270,7 @@ function initGraph(graphData) {
       line1.setAttribute("x2", w / 2 - 2);
       line1.setAttribute("y2", -2);
       line1.setAttribute("class", "doc-line");
-      g.appendChild(line1);
+      shapeGroup.appendChild(line1);
 
       const line2 = document.createElementNS(svgNS, "line");
       line2.setAttribute("x1", -w / 2 + 2);
@@ -273,7 +278,7 @@ function initGraph(graphData) {
       line2.setAttribute("x2", w / 2 - 2);
       line2.setAttribute("y2", 1);
       line2.setAttribute("class", "doc-line");
-      g.appendChild(line2);
+      shapeGroup.appendChild(line2);
 
       const line3 = document.createElementNS(svgNS, "line");
       line3.setAttribute("x1", -w / 2 + 2);
@@ -281,15 +286,17 @@ function initGraph(graphData) {
       line3.setAttribute("x2", w / 2 - 2);
       line3.setAttribute("y2", 4);
       line3.setAttribute("class", "doc-line");
-      g.appendChild(line3);
+      shapeGroup.appendChild(line3);
     } else if (node.kind === "label") {
       const r = 10;
       halfHeight = r;
       const circle = document.createElementNS(svgNS, "circle");
       circle.setAttribute("r", r);
       circle.setAttribute("class", "node-label-shape");
-      g.appendChild(circle);
+      shapeGroup.appendChild(circle);
     }
+    
+    g.appendChild(shapeGroup);
 
     if (node.label && node.label.trim().length > 0) {
       const lines = wrapLabel(node.label, 50);
@@ -315,6 +322,7 @@ function initGraph(graphData) {
       event.stopPropagation();
       revealNeighbors(node.id);
       showNodeDetail(node.id);
+      centerNode(node.id);
     });
 
     return g;
@@ -336,9 +344,20 @@ function initGraph(graphData) {
     const endX = targetNode.x - (dx / distance) * endPadding;
     const endY = targetNode.y - (dy / distance) * endPadding;
 
-    // Create squared/angled path: go horizontal first, then vertical
-    const midX = startX + (endX - startX) * 0.5;
-    path.setAttribute("d", `M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${endX} ${endY}`);
+    // Create jittery path with random perturbations
+    const segments = 8; // Number of segments for jitter
+    const jitterAmount = 5; // Max pixels to jitter
+    const points = [`M ${startX} ${startY}`];
+    
+    for (let i = 1; i < segments; i++) {
+      const t = i / segments;
+      const x = startX + (endX - startX) * t + (Math.random() - 0.5) * jitterAmount;
+      const y = startY + (endY - startY) * t + (Math.random() - 0.5) * jitterAmount;
+      points.push(`L ${x} ${y}`);
+    }
+    
+    points.push(`L ${endX} ${endY}`);
+    path.setAttribute("d", points.join(" "));
 
     return path;
   }
@@ -398,6 +417,43 @@ function initGraph(graphData) {
   currentX = initialPadding - minX;
   currentY = initialPadding - minY;
   rootGroup.setAttribute("transform", `translate(${currentX},${currentY})`);
+
+  function centerNode(nodeId, duration = 600) {
+    const node = nodeById[nodeId];
+    if (!node) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    const centerX = containerRect.width / 2;
+    const centerY = containerRect.height / 2;
+    
+    // Calculate target position to center the node
+    const targetX = centerX - node.x;
+    const targetY = centerY - node.y;
+    
+    // Animate from current position to target
+    const startX = currentX;
+    const startY = currentY;
+    const startTime = performance.now();
+    
+    function animate(time) {
+      const elapsed = time - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Ease-out cubic for smooth deceleration
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      
+      currentX = startX + (targetX - startX) * easeProgress;
+      currentY = startY + (targetY - startY) * easeProgress;
+      
+      rootGroup.setAttribute("transform", `translate(${currentX},${currentY})`);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    }
+    
+    requestAnimationFrame(animate);
+  }
 
   function pointerDown(e) {
     if (e.button !== 0) return;
