@@ -1,0 +1,126 @@
+.paper-panel .panel-surface {
+  font-family: "IBM Plex Serif", "Georgia", serif;
+  background: #fdfcf8;
+  border: 1px solid #e6dece;
+  padding: 32px 30px 28px;
+  box-shadow: 0 16px 40px rgba(42, 33, 16, 0.18);
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.paper-panel .panel-surface::before {
+  content: "";
+  position: absolute;
+  inset: 18px 22px;
+  border: 1px solid rgba(107, 85, 46, 0.18);
+  pointer-events: none;
+}
+
+.paper-panel .paper-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.paper-panel .paper-series {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #8b7b63;
+}
+
+.paper-panel .paper-header h3 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #2d2416;
+}
+
+.paper-panel .paper-authors {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #7f6c4e;
+}
+
+.paper-panel .paper-abstract p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #3b2f1e;
+}
+
+.paper-panel .paper-highlights {
+  margin: 0;
+}
+
+.paper-panel .paper-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 18px;
+  margin: 0;
+}
+
+.paper-panel .metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.paper-panel .metric dt {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8b7b63;
+}
+
+.paper-panel .metric dd {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d2416;
+}
+
+.paper-panel .paper-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.paper-panel .paper-link {
+  font-size: 13px;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: #2d2416;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(45, 36, 22, 0.2);
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+
+.paper-panel .paper-link:hover,
+.paper-panel .paper-link:focus-visible {
+  background: #2d2416;
+  color: #fdfcf8;
+  border-color: #2d2416;
+}
+
+@media (max-width: 480px) {
+  .paper-panel .panel-surface {
+    padding: 28px 22px 24px;
+  }
+
+  .paper-panel .panel-surface::before {
+    inset: 16px 16px;
+  }
+
+  .paper-panel .paper-metrics {
+    grid-template-columns: 1fr;
+  }
+}
