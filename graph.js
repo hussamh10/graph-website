@@ -174,6 +174,83 @@ function initGraph(graphData) {
 
   const visibleNodes = new Set(["root"]);
   let activeNodeId = null;
+  let highlightedNodes = new Set(["root"]);
+  let highlightedLinks = new Set();
+
+  const parentById = {};
+  const depthById = {};
+  const childrenById = {};
+
+  function ensureChildrenSet(id) {
+    if (!childrenById[id]) {
+      childrenById[id] = new Set();
+    }
+    return childrenById[id];
+  }
+
+  function edgeKey(a, b) {
+    return a < b ? `${a}|${b}` : `${b}|${a}`;
+  }
+
+  function buildHierarchy() {
+    const rootId = "root";
+    if (!nodeById[rootId]) return;
+
+    const queue = [rootId];
+    parentById[rootId] = null;
+    depthById[rootId] = 0;
+    ensureChildrenSet(rootId);
+
+    while (queue.length > 0) {
+      const current = queue.shift();
+      const neighbors = adjacency[current];
+      if (!neighbors) continue;
+
+      neighbors.forEach((neighborId) => {
+        if (parentById.hasOwnProperty(neighborId)) return;
+        parentById[neighborId] = current;
+        depthById[neighborId] = depthById[current] + 1;
+        ensureChildrenSet(current).add(neighborId);
+        ensureChildrenSet(neighborId);
+        queue.push(neighborId);
+      });
+    }
+  }
+
+  buildHierarchy();
+
+  function updateHighlights(targetId) {
+    const newHighlightedNodes = new Set();
+    const newHighlightedLinks = new Set();
+
+    if (!nodeById[targetId]) {
+      highlightedNodes = newHighlightedNodes;
+      highlightedLinks = newHighlightedLinks;
+      return;
+    }
+
+    let currentId = targetId;
+    while (currentId) {
+      newHighlightedNodes.add(currentId);
+      const parentId = parentById[currentId];
+      if (parentId) {
+        newHighlightedNodes.add(parentId);
+        newHighlightedLinks.add(edgeKey(currentId, parentId));
+      }
+      currentId = parentId;
+    }
+
+    const children = childrenById[targetId];
+    if (children) {
+      children.forEach((childId) => {
+        newHighlightedNodes.add(childId);
+        newHighlightedLinks.add(edgeKey(targetId, childId));
+      });
+    }
+
+    highlightedNodes = newHighlightedNodes;
+    highlightedLinks = newHighlightedLinks;
+  }
 
   function getNodePadding(node) {
     switch (node.kind) {
@@ -193,6 +270,7 @@ function initGraph(graphData) {
   function showNodeDetail(nodeId) {
     const node = nodeById[nodeId];
     if (!node) return;
+    updateHighlights(nodeId);
     activeNodeId = nodeId;
 
     const title = node.title || node.label || node.id;
@@ -297,6 +375,8 @@ function initGraph(graphData) {
     }
     
     g.appendChild(shapeGroup);
+    g.style.opacity =
+      highlightedNodes.size === 0 || highlightedNodes.has(node.id) ? "1" : "0.15";
 
     if (node.label && node.label.trim().length > 0) {
       const lines = wrapLabel(node.label, 50);
@@ -320,8 +400,8 @@ function initGraph(graphData) {
 
     g.addEventListener("click", (event) => {
       event.stopPropagation();
-      revealNeighbors(node.id);
       showNodeDetail(node.id);
+      revealNeighbors(node.id);
       centerNode(node.id);
     });
 
@@ -331,6 +411,9 @@ function initGraph(graphData) {
   function createLinkElement(sourceNode, targetNode) {
     const path = document.createElementNS(svgNS, "path");
     path.setAttribute("class", "link");
+    const key = edgeKey(sourceNode.id, targetNode.id);
+    path.style.opacity =
+      highlightedLinks.size === 0 || highlightedLinks.has(key) ? "1" : "0.15";
 
     const dx = targetNode.x - sourceNode.x;
     const dy = targetNode.y - sourceNode.y;
@@ -398,8 +481,8 @@ function initGraph(graphData) {
     renderGraph();
   }
 
-  renderGraph();
   showNodeDetail("root");
+  renderGraph();
 
   const container = document.getElementById("graph-container");
   let isPanning = false;
@@ -408,14 +491,26 @@ function initGraph(graphData) {
   let currentX = 0;
   let currentY = 0;
 
-  const xValues = graphData.nodes.map((n) => n.x);
-  const yValues = graphData.nodes.map((n) => n.y);
-  const minX = Math.min(...xValues);
-  const minY = Math.min(...yValues);
-  const initialPadding = 40;
-
-  currentX = initialPadding - minX;
-  currentY = initialPadding - minY;
+  // Center the root node initially
+  const rootNode = nodeById["root"];
+  if (rootNode) {
+    const containerRect = container.getBoundingClientRect();
+    const centerX = containerRect.width / 2;
+    const centerY = containerRect.height / 2;
+    
+    currentX = centerX - rootNode.x;
+    currentY = centerY - rootNode.y;
+  } else {
+    // Fallback if no root node
+    const xValues = graphData.nodes.map((n) => n.x);
+    const yValues = graphData.nodes.map((n) => n.y);
+    const minX = Math.min(...xValues);
+    const minY = Math.min(...yValues);
+    const initialPadding = 40;
+    
+    currentX = initialPadding - minX;
+    currentY = initialPadding - minY;
+  }
   rootGroup.setAttribute("transform", `translate(${currentX},${currentY})`);
 
   function centerNode(nodeId, duration = 600) {
