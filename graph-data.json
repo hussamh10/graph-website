@@ -1,148 +1,171 @@
 {
-  "nodes": [
-    {
-      "id": "root",
-      "kind": "root",
-      "x": 260,
-      "y": 190,
-      "title": "Welcome",
-      "contentType": "markdown",
-      "content": "# Hussam Habib\\n\\nExplore the topics around my work, travels, and writing by clicking the nodes in the graph."
-    },
-
-    {
-      "id": "blog",
-      "kind": "icon",
-      "shape": "triangle",
-      "orientation": "up",
-      "label": "Blog",
-      "color": "#f27ccf",
-      "x": 170,
-      "y": 210,
-      "labelOffsetY": 28,
-      "labelAnchor": "middle",
-      "title": "Latest writing",
-      "contentType": "markdown",
-      "content": "Stay up to date with essays about online communities, moderation, and product thinking.\\n\\n- Case studies from community platforms\\n- Reflections on building for safety\\n- Notes on design experiments"
-    },
-    {
-      "id": "travel",
-      "kind": "icon",
-      "shape": "triangle",
-      "orientation": "up",
-      "label": "Travel",
-      "color": "#45b5ff",
-      "x": 260,
-      "y": 290,
-      "labelOffsetY": 28,
-      "labelAnchor": "middle",
-      "title": "Travel log",
-      "contentType": "markdown",
-      "content": "Moments from recent adventures and the lessons they brought.\\n\\n**Highlights**\\n\\n1. Mapping neighborhoods through food\\n2. Photographing urban textures\\n3. Meeting local researchers"
-    },
-    {
-      "id": "about",
-      "kind": "icon",
-      "shape": "triangle",
-      "orientation": "down",
-      "label": "About",
-      "color": "#4ab247",
-      "x": 320,
-      "y": 110,
-      "labelOffsetY": -24,
-      "labelAnchor": "middle",
-      "title": "About Hussam",
-      "contentType": "markdown",
-      "content": "I'm a researcher and builder focused on healthier online ecosystems.\\n\\n> I care about connecting product decisions with social impact.\\n\\nOutside of work you'll find me cycling, planning the next trip, or sketching interfaces."
-    },
-    {
-      "id": "research",
-      "kind": "icon",
-      "shape": "triangle",
-      "orientation": "up",
-      "label": "Research",
-      "color": "#f2a656",
-      "x": 380,
-      "y": 220,
-      "labelOffsetY": 28,
-      "labelAnchor": "middle",
-      "title": "Research Themes",
-      "contentType": "html",
-      "content": "<p>Investigations into how we can build safer, more equitable platforms.</p><ul><li>Moderation tooling</li><li>Responsible audits</li><li>Community resilience</li></ul>"
-    },
-
-    {
-      "id": "mod",
-      "kind": "label",
-      "label": "Moderation interventions",
-      "x": 510,
-      "y": 290,
-      "labelOffsetY": 0,
-      "labelAnchor": "middle",
-      "title": "Making moderation better",
-      "contentType": "markdown",
-      "content": "Designing interventions that keep communities healthy without burning out moderators."
-    },
-    {
-      "id": "audit",
-      "kind": "label",
-      "label": "Auditing algorithms",
-      "x": 520,
-      "y": 170,
-      "labelOffsetY": 0,
-      "labelAnchor": "middle",
-      "title": "Algorithmic audits",
-      "contentType": "markdown",
-      "content": "Studying feedback loops, measuring impact, and building transparent review practices."
-    },
-
-    {
-      "id": "paper1",
-      "kind": "doc",
-      "label": "Proactive interventions",
-      "x": 530,
-      "y": 50,
-      "labelOffsetX": 22,
-      "labelOffsetY": 5,
-      "labelAnchor": "start",
-      "title": "Paper: Proactive Interventions",
-      "contentType": "html",
-      "content": "<h3>Are Proactive Interventions for Reddit Communities Feasible?</h3><p>An empirical look at how early signals can help keep communities on track.</p><p><a href=\"https://example.com/interventions\" target=\"_blank\" rel=\"noopener\">Read the paper</a></p>"
-    },
-    {
-      "id": "paper2",
-      "kind": "doc",
-      "label": "Reddit communities",
-      "x": 640,
-      "y": 100,
-      "labelOffsetX": 22,
-      "labelOffsetY": 5,
-      "labelAnchor": "start",
-      "title": "Paper: Community Dashboards",
-      "contentType": "markdown",
-      "content": "Exploring dashboards that give moderators predictive signals about their spaces."
-    },
-    {
-      "id": "paper3",
-      "kind": "doc",
-      "label": "YouTube emotional reinforcement",
-      "x": 730,
-      "y": 190,
-      "title": "Working paper",
-      "contentType": "markdown",
-      "content": "In-progress research on collaboration between trust & safety teams and community leaders."
-    }
-  ],
-
-  "links": [
-    { "source": "root", "target": "blog" },
-    { "source": "root", "target": "travel" },
-    { "source": "root", "target": "about" },
-    { "source": "root", "target": "research" },
-    { "source": "research", "target": "mod" },
-    { "source": "research", "target": "audit" },
-    { "source": "audit", "target": "paper1" },
-    { "source": "audit", "target": "paper2" },
-    { "source": "audit", "target": "paper3" }
-  ]
+    "nodes": [
+        {
+            "id": "root",
+            "kind": "root",
+            "x": 260,
+            "y": 190,
+            "title": "Welcome",
+            "contentType": "markdown",
+            "content": "# Hussam Habib\\n\\nExplore the topics around my work, travels, and writing by clicking the nodes in the graph."
+        },
+        {
+            "id": "blog",
+            "kind": "icon",
+            "shape": "triangle",
+            "orientation": "up",
+            "label": "Blog",
+            "color": "#f27ccf",
+            "x": 170,
+            "y": 210,
+            "labelOffsetY": 28,
+            "labelAnchor": "middle",
+            "title": "Latest writing",
+            "contentType": "markdown",
+            "content": "Stay up to date with essays about online communities, moderation, and product thinking.\\n\\n- Case studies from community platforms\\n- Reflections on building for safety\\n- Notes on design experiments"
+        },
+        {
+            "id": "travel",
+            "kind": "icon",
+            "shape": "triangle",
+            "orientation": "up",
+            "label": "Travel",
+            "color": "#45b5ff",
+            "x": 260,
+            "y": 290,
+            "labelOffsetY": 28,
+            "labelAnchor": "middle",
+            "title": "Travel log",
+            "contentType": "markdown",
+            "content": "Moments from recent adventures and the lessons they brought.\\n\\n**Highlights**\\n\\n1. Mapping neighborhoods through food\\n2. Photographing urban textures\\n3. Meeting local researchers"
+        },
+        {
+            "id": "about",
+            "kind": "icon",
+            "shape": "triangle",
+            "orientation": "down",
+            "label": "About",
+            "color": "#4ab247",
+            "x": 320,
+            "y": 110,
+            "labelOffsetY": -24,
+            "labelAnchor": "middle",
+            "title": "About Hussam",
+            "contentType": "panel",
+            "panelId": "about"
+        },
+        {
+            "id": "research",
+            "kind": "icon",
+            "shape": "triangle",
+            "orientation": "up",
+            "label": "Research",
+            "color": "#f2a656",
+            "x": 380,
+            "y": 220,
+            "labelOffsetY": 28,
+            "labelAnchor": "middle",
+            "title": "Research Themes",
+            "contentType": "html",
+            "content": "<p>Investigations into how we can build safer, more equitable platforms.</p><ul><li>Moderation tooling</li><li>Responsible audits</li><li>Community resilience</li></ul>"
+        },
+        {
+            "id": "mod",
+            "kind": "label",
+            "label": "Moderation interventions",
+            "x": 510,
+            "y": 290,
+            "labelOffsetY": 0,
+            "labelAnchor": "middle",
+            "title": "Making moderation better",
+            "contentType": "markdown",
+            "content": "Designing interventions that keep communities healthy without burning out moderators."
+        },
+        {
+            "id": "audit",
+            "kind": "label",
+            "label": "Auditing algorithms",
+            "x": 520,
+            "y": 170,
+            "labelOffsetY": 0,
+            "labelAnchor": "middle",
+            "title": "Algorithmic audits",
+            "contentType": "markdown",
+            "content": "Studying feedback loops, measuring impact, and building transparent review practices."
+        },
+        {
+            "id": "paper1",
+            "kind": "doc",
+            "label": "Proactive interventions",
+            "x": 530,
+            "y": 50,
+            "labelOffsetX": 22,
+            "labelOffsetY": 5,
+            "labelAnchor": "start",
+            "title": "Paper: Proactive Interventions",
+            "contentType": "panel",
+            "panelId": "paper1"
+        },
+        {
+            "id": "paper2",
+            "kind": "doc",
+            "label": "Reddit communities",
+            "x": 640,
+            "y": 100,
+            "labelOffsetX": 22,
+            "labelOffsetY": 5,
+            "labelAnchor": "start",
+            "title": "Paper: Community Dashboards",
+            "contentType": "markdown",
+            "content": "Exploring dashboards that give moderators predictive signals about their spaces."
+        },
+        {
+            "id": "paper3",
+            "kind": "doc",
+            "label": "YouTube emotional reinforcement",
+            "x": 730,
+            "y": 190,
+            "title": "Working paper",
+            "contentType": "markdown",
+            "content": "In-progress research on collaboration between trust & safety teams and community leaders."
+        }
+    ],
+    "links": [
+        {
+            "source": "root",
+            "target": "blog"
+        },
+        {
+            "source": "root",
+            "target": "travel"
+        },
+        {
+            "source": "root",
+            "target": "about"
+        },
+        {
+            "source": "root",
+            "target": "research"
+        },
+        {
+            "source": "research",
+            "target": "mod"
+        },
+        {
+            "source": "research",
+            "target": "audit"
+        },
+        {
+            "source": "audit",
+            "target": "paper1"
+        },
+        {
+            "source": "audit",
+            "target": "paper2"
+        },
+        {
+            "source": "audit",
+            "target": "paper3"
+        }
+    ]
 }
