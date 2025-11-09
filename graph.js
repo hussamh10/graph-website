@@ -278,6 +278,7 @@ function createPanelManager(detailContent) {
 
 function initGraph(graphData) {
   const svg = document.getElementById("graph");
+  const detailPanel = document.getElementById("detail-panel");
   const detailTitle = document.getElementById("detail-title");
   const detailContent = document.getElementById("detail-content");
   const panelManager = createPanelManager(detailContent);
@@ -415,14 +416,16 @@ function initGraph(graphData) {
     activeNodeId = nodeId;
 
     const title = node.title || node.label || node.id;
-    detailTitle.textContent = title;
+    const isHtmlContent = node.contentType === "html";
+    detailPanel.classList.toggle("detail-panel--plain", isHtmlContent);
+    detailTitle.textContent = isHtmlContent ? "" : title;
 
     if (node.contentType === "panel") {
       const panelId = node.panelId || node.id;
       panelManager.loadPanel(panelId, node);
     } else {
       panelManager.clearPanel();
-      if (node.contentType === "html") {
+      if (isHtmlContent) {
         detailContent.innerHTML = node.content || "";
       } else {
         detailContent.innerHTML = markdownToHtml(node.content || "");
