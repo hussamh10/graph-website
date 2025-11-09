@@ -418,8 +418,12 @@ function initGraph(graphData) {
     const title = node.title || node.label || node.id;
     const isPanelContent = node.contentType === "panel";
     const isHtmlContent = node.contentType === "html";
+    const isMarkdownContent = !isPanelContent && !isHtmlContent;
     const usePlainLayout = isPanelContent || isHtmlContent;
     detailPanel.classList.toggle("detail-panel--plain", usePlainLayout);
+    detailPanel.classList.toggle("detail-panel--panel", isPanelContent);
+    detailPanel.classList.toggle("detail-panel--html", isHtmlContent);
+    detailPanel.classList.toggle("detail-panel--markdown", isMarkdownContent);
     detailTitle.textContent = usePlainLayout ? "" : title;
 
     if (isPanelContent) {
