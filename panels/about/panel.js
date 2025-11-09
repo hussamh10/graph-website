@@ -1,33 +1,91 @@
-const surface = container.querySelector('.panel-surface');
-if (!surface) {
-  return;
-}
-
-const setTilt = (xDeg, yDeg) => {
-  surface.style.setProperty('--panel-tilt-x', `${xDeg}deg`);
-  surface.style.setProperty('--panel-tilt-y', `${yDeg}deg`);
-};
-
-const resetTilt = () => setTilt(0, 0);
-
-const handleMove = (event) => {
-  const rect = surface.getBoundingClientRect();
-  const x = (event.clientX - rect.left) / rect.width - 0.5;
-  const y = (event.clientY - rect.top) / rect.height - 0.5;
-  const tiltX = Math.max(-6, Math.min(6, -y * 12));
-  const tiltY = Math.max(-6, Math.min(6, x * 12));
-  setTilt(parseFloat(tiltX.toFixed(2)), parseFloat(tiltY.toFixed(2)));
-};
-
-surface.addEventListener('pointermove', handleMove);
-surface.addEventListener('pointerleave', resetTilt);
-surface.addEventListener('pointerup', resetTilt);
-surface.addEventListener('pointercancel', resetTilt);
-
-return () => {
-  surface.removeEventListener('pointermove', handleMove);
-  surface.removeEventListener('pointerleave', resetTilt);
-  surface.removeEventListener('pointerup', resetTilt);
-  surface.removeEventListener('pointercancel', resetTilt);
-  resetTilt();
-};
+document.querySelectorAll('.expandable-trigger').forEach(function(dotsElement) {
+    dotsElement.addEventListener('click', function() {
+        // Get the ID number from the dots element
+        var dotsId = this.id;
+        var idNumber = dotsId.split('-').pop();
+        
+        // Find the corresponding content element
+        var contentElement = document.getElementById('expandable-content-' + idNumber);
+        
+        if (contentElement && contentElement.classList.contains('expandable-hidden')) {
+            // Hide the trigger
+            this.style.display = 'none';
+            
+            // Store the full HTML content
+            var fullContent = contentElement.innerHTML;
+            var plainText = contentElement.textContent || contentElement.innerText;
+            
+            // Show the element but empty it first
+            contentElement.classList.remove('expandable-hidden');
+            contentElement.classList.add('expandable-visible');
+            contentElement.innerHTML = '';
+            
+            // Type out character by character
+            var charIndex = 0;
+            var typingSpeed = 15; // milliseconds per character
+            
+            function typeCharacter() {
+                if (charIndex < plainText.length) {
+                    // Get the portion of HTML that corresponds to characters revealed so far
+                    var tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = fullContent;
+                    var revealedText = plainText.substring(0, charIndex + 1);
+                    
+                    // Simple approach: reveal HTML progressively
+                    var htmlSoFar = '';
+                    var textSoFar = '';
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(fullContent, 'text/html');
+                    
+                    function extractUpToLength(node, targetLength) {
+                        var result = '';
+                        var currentLength = textSoFar.length;
+                        
+                        for (var i = 0; i < node.childNodes.length; i++) {
+                            var child = node.childNodes[i];
+                            
+                            if (currentLength >= targetLength) break;
+                            
+                            if (child.nodeType === Node.TEXT_NODE) {
+                                var text = child.textContent;
+                                var remainingChars = targetLength - currentLength;
+                                if (text.length <= remainingChars) {
+                                    result += text;
+                                    textSoFar += text;
+                                    currentLength += text.length;
+                                } else {
+                                    var partial = text.substring(0, remainingChars);
+                                    result += partial;
+                                    textSoFar += partial;
+                                    currentLength += partial.length;
+                                }
+                            } else if (child.nodeType === Node.ELEMENT_NODE) {
+                                var tagName = child.tagName.toLowerCase();
+                                var attrs = '';
+                                for (var j = 0; j < child.attributes.length; j++) {
+                                    var attr = child.attributes[j];
+                                    attrs += ' ' + attr.name + '="' + attr.value + '"';
+                                }
+                                result += '<' + tagName + attrs + '>';
+                                result += extractUpToLength(child, targetLength);
+                                result += '</' + tagName + '>';
+                                
+                                if (textSoFar.length >= targetLength) break;
+                            }
+                        }
+                        return result;
+                    }
+                    
+                    contentElement.innerHTML = extractUpToLength(doc.body, charIndex + 1);
+                    charIndex++;
+                    setTimeout(typeCharacter, typingSpeed);
+                } else {
+                    // Ensure final content is complete
+                    contentElement.innerHTML = fullContent;
+                }
+            }
+            
+            typeCharacter();
+        }
+    });
+});

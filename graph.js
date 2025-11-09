@@ -283,6 +283,10 @@ function initGraph(graphData) {
   const detailContent = document.getElementById("detail-content");
   const panelManager = createPanelManager(detailContent);
   const svgNS = "http://www.w3.org/2000/svg";
+  const xlinkNS = "http://www.w3.org/1999/xlink";
+
+  const defs = document.createElementNS(svgNS, "defs");
+  svg.appendChild(defs);
 
   const rootGroup = document.createElementNS(svgNS, "g");
   rootGroup.setAttribute("id", "graph-root");
@@ -318,6 +322,8 @@ function initGraph(graphData) {
   let activeNodeId = null;
   let highlightedNodes = new Set(["root"]);
   let highlightedLinks = new Set();
+
+  const imageClipCache = new Map();
 
   const parentById = {};
   const depthById = {};
@@ -394,7 +400,56 @@ function initGraph(graphData) {
     highlightedLinks = newHighlightedLinks;
   }
 
+  const parseNumber = (value, fallback) => {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : fallback;
+  };
+
+  function getImageDimensions(node) {
+    if (!node || !node.image) return null;
+    const width = parseNumber(node.imageWidth, 80);
+    const height = parseNumber(node.imageHeight, width);
+    return {
+      width,
+      height,
+    };
+  }
+
+  function ensureImageClipPath(nodeId, width, height, cornerRadius) {
+    const clipId = `node-image-clip-${nodeId}`;
+    let clipPath = imageClipCache.get(clipId);
+    if (!clipPath) {
+      clipPath = document.createElementNS(svgNS, "clipPath");
+      clipPath.setAttribute("id", clipId);
+      clipPath.setAttribute("clipPathUnits", "userSpaceOnUse");
+      defs.appendChild(clipPath);
+      imageClipCache.set(clipId, clipPath);
+    }
+
+    while (clipPath.firstChild) {
+      clipPath.removeChild(clipPath.firstChild);
+    }
+
+    const rect = document.createElementNS(svgNS, "rect");
+    rect.setAttribute("x", (-width / 2).toString());
+    rect.setAttribute("y", (-height / 2).toString());
+    rect.setAttribute("width", width.toString());
+    rect.setAttribute("height", height.toString());
+    if (cornerRadius > 0) {
+      rect.setAttribute("rx", cornerRadius.toString());
+      rect.setAttribute("ry", cornerRadius.toString());
+    }
+    clipPath.appendChild(rect);
+
+    return clipId;
+  }
+
   function getNodePadding(node) {
+    const imageDimensions = getImageDimensions(node);
+    if (imageDimensions) {
+      return Math.max(imageDimensions.width, imageDimensions.height) / 2;
+    }
+
     switch (node.kind) {
       case "root":
         return 18;
@@ -445,13 +500,65 @@ function initGraph(graphData) {
     g.classList.add("graph-node");
 
     let halfHeight = 0;
-    
-    // Random rotation for shapes (between -8 and 8 degrees)
-    const randomRotation = (Math.random() - 0.5) * 16;
-    const shapeGroup = document.createElementNS(svgNS, "g");
-    shapeGroup.setAttribute("transform", `rotate(${randomRotation})`);
 
-    if (node.kind === "root") {
+    const shapeGroup = document.createElementNS(svgNS, "g");
+    const hasImage = typeof node.image === "string" && node.image.trim().length > 0;
+
+    if (!hasImage) {
+      // Random rotation for shapes (between -8 and 8 degrees)
+      const randomRotation = (Math.random() - 0.5) * 16;
+      shapeGroup.setAttribute("transform", `rotate(${randomRotation})`);
+    }
+
+    if (hasImage) {
+      g.classList.add("node-with-image");
+      const { width, height } = getImageDimensions(node);
+      const cornerRadius = parseNumber(
+        node.imageCornerRadius,
+        Math.min(width, height) / 6
+      );
+      const borderWidth = parseNumber(node.imageBorderWidth, 2);
+      const hasBorder = borderWidth > 0;
+      const backgroundColor =
+        node.imageBackgroundColor === undefined
+          ? "#ffffff"
+          : node.imageBackgroundColor || "transparent";
+      const borderColor = node.imageBorderColor || "#111111";
+
+      if (backgroundColor !== "transparent" || hasBorder) {
+        const frame = document.createElementNS(svgNS, "rect");
+        frame.setAttribute("x", (-width / 2).toString());
+        frame.setAttribute("y", (-height / 2).toString());
+        frame.setAttribute("width", width.toString());
+        frame.setAttribute("height", height.toString());
+        if (cornerRadius > 0) {
+          frame.setAttribute("rx", cornerRadius.toString());
+          frame.setAttribute("ry", cornerRadius.toString());
+        }
+        frame.setAttribute("fill", backgroundColor);
+        frame.setAttribute("stroke", hasBorder ? borderColor : "none");
+        if (hasBorder) {
+          frame.setAttribute("stroke-width", borderWidth.toString());
+        }
+        frame.classList.add("node-image-frame");
+        shapeGroup.appendChild(frame);
+      }
+
+      const image = document.createElementNS(svgNS, "image");
+      image.setAttribute("x", (-width / 2).toString());
+      image.setAttribute("y", (-height / 2).toString());
+      image.setAttribute("width", width.toString());
+      image.setAttribute("height", height.toString());
+      image.classList.add("node-image");
+      image.setAttribute("href", node.image);
+      image.setAttributeNS(xlinkNS, "href", node.image);
+      if (cornerRadius > 0) {
+        const clipId = ensureImageClipPath(node.id, width, height, cornerRadius);
+        image.setAttribute("clip-path", `url(#${clipId})`);
+      }
+      shapeGroup.appendChild(image);
+      halfHeight = height / 2;
+    } else if (node.kind === "root") {
       const r = 14;
       halfHeight = r;
       const circle = document.createElementNS(svgNS, "circle");
@@ -529,7 +636,7 @@ function initGraph(graphData) {
       circle.setAttribute("class", "node-label-shape");
       shapeGroup.appendChild(circle);
     }
-    
+
     g.appendChild(shapeGroup);
     g.style.opacity =
       highlightedNodes.size === 0 || highlightedNodes.has(node.id) ? "1" : "0.15";

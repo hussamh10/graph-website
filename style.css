@@ -11,7 +11,8 @@ body {
   margin: 3rem;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   color: #000000;
-  background: #f4f0e2;
+  /* background: #f4f0e2; */
+  background: #DBD9D1;
   display: flex;
   flex-direction: column;
 }
@@ -35,7 +36,8 @@ body {
   min-height: 0;
   overflow: hidden;
   cursor: grab;
-  background: #f4f0e2;
+  /* background: #f4f0e2; */
+  background: #DBD9D1;
 }
 
 #graph-container.dragging {
@@ -246,7 +248,8 @@ body {
 /* Root node */
 .node-root circle {
   fill: #f47c30;
-  stroke: none;
+  stroke: #000;
+  stroke-width: 2;
 }
 
 /* Icon triangles */
@@ -277,10 +280,14 @@ body {
   text-anchor: middle;
   pointer-events: none;
   paint-order: stroke fill;
-  stroke: #f4f0e2;
+  stroke: #DBD9D1;
   stroke-width: 5px;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.node-with-image .node-label {
+  stroke-width: 6px;
 }
 
 /* Small circles for "label" nodes */

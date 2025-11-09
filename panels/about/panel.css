@@ -1,13 +1,15 @@
 .about-panel .panel-surface {
   background: transparent !important;
   box-shadow: none !important;
+  margin-top: 120px;
   padding: 0;
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 12px;
   height: auto;
-  max-height: 100%;
+  max-width: 30vw;
+  min-height: 60vh;
   overflow: visible;
 }
 
@@ -15,12 +17,13 @@
 .about-panel .about-card {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(2px);
-  border-radius: 8px;
+  border-radius: 1px;
   padding: 18px;
-  box-shadow: 0 8px 24px rgba(34, 35, 58, 0.15);
+  box-shadow: 0 2px 24px rgba(34, 35, 58, 0.15);
   width: 100%;
-  max-width: 240px;
-  transform: rotate(-1.5deg);
+  max-width: 280px;
+  transform: rotate(1.5deg);
+  margin-left: 8vw;
   position: relative;
   z-index: 2;
 }
@@ -34,14 +37,14 @@
 
 .about-panel .about-card p {
   margin: 0 0 12px;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.2;
   color: #4c4032;
 }
 
 .about-panel .about-card ul {
   margin: 0;
-  padding-left: 18px;
+  padding-right: 18px;
   font-size: 12px;
   color: #5b4a38;
   line-height: 1.4;
@@ -51,32 +54,31 @@
   margin-bottom: 3px;
 }
 
-/* Picture Card - Behind text, peeking on right */
 .about-panel .about-polaroid {
   position: absolute;
   top: 40px;
-  right: -40px;
+  left: 20px;
   width: 160px;
-  transform: rotate(6deg);
-  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
+  transform: rotate(-6deg);
   z-index: 1;
 }
 
 .about-panel .polaroid-frame {
   background: #ffffff;
-  border-radius: 12px;
-  padding: 12px 12px 16px;
+  border-radius: 5px;
+  padding: 0px 0px 0px 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 0px;
 }
 
 .about-panel .polaroid-image {
   width: 100%;
   height: auto;
-  max-height: 120px;
-  border-radius: 8px;
+  /* max-height: 120px; */
+  border-radius: 2px;
+  border: 1px solid #000;
   display: block;
   object-fit: cover;
 }
@@ -89,29 +91,92 @@
   color: #7b6652;
 }
 
-/* Map Card - Below text */
-.about-panel .about-map {
-  width: 100%;
-  margin-top: 80px;
+.expandable-trigger {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+  vertical-align: baseline;
+  font-size: 0.75em;
+  position: relative;
+  top: -0.5em;
+  line-height: 0;
 }
 
-.about-panel .map-card {
-  background: rgba(24, 28, 47, 0.95);
-  border-radius: 10px;
-  padding: 14px;
-  transform: rotate(1.2deg);
-  box-shadow: 0 8px 24px rgba(17, 23, 41, 0.3);
+.expandable-trigger:hover {
+  opacity: 0.7;
 }
 
-.about-panel .map-header {
+.expandable-hidden {
   display: none;
 }
 
-.about-panel .map-illustration {
-  width: 100%;
+.expandable-visible {
+  display: inline;
+}
+
+/* PDF Cards Container */
+.about-panel .pdf-cards-container {
+  position: absolute;
+  top: 380px;
+  left: 3vw;
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+/* Individual PDF Card */
+.about-panel .pdf-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.about-panel .pdf-card-a {
+  margin-top: -70px;
+  margin-left: -30px;
+  transform: rotate(-2deg);
+}
+
+.about-panel .pdf-card-b {
+  margin-left: -60px;
+  transform: rotate(2.5deg);
+}
+
+.about-panel .pdf-card:hover {
+  transform: translateY(-4px);
+}
+
+.about-panel .pdf-card-image-wrapper {
+  background: #ffffff;
+  border-radius: 4px;
+  /* padding: 8px; */
+  /* box-shadow: 0px 0px 16px rgba(34, 35, 58, 0.18), -1px 2px 4px rgba(34,35,58,0.10); */
+  border: 1px solid #ddd;
+  transition: box-shadow 0.1s ease;
+}
+
+.about-panel .pdf-card:hover .pdf-card-image-wrapper {
+  box-shadow: 0px 0px 16px rgba(34, 35, 58, 0.18), -1px 2px 4px rgba(34,35,58,0.10);
+}
+
+.about-panel .pdf-card-image {
+  width: 80px;
   height: auto;
-  max-height: 100px;
-  border-radius: 8px;
   display: block;
-  object-fit: cover;
+  border-radius: 0px;
+}
+
+.about-panel .pdf-card-label {
+  margin: 3px 0 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #3b3126;
+  text-align: center;
+  letter-spacing: 0.02em;
 }

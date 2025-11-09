@@ -6,7 +6,8 @@
             "x": 260,
             "y": 190,
             "title": "Welcome",
-            "contentType": "markdown",
+            "contentType": "panel",
+            "panelId": "about",
             "content": "# Hussam Habib\\n\\nExplore the topics around my work, travels, and writing by clicking the nodes in the graph."
         },
         {
@@ -22,7 +23,12 @@
             "labelAnchor": "middle",
             "title": "Latest writing",
             "contentType": "markdown",
-            "content": "Stay up to date with essays about online communities, moderation, and product thinking.\\n\\n- Case studies from community platforms\\n- Reflections on building for safety\\n- Notes on design experiments"
+            "content": "Stay up to date with essays about online communities, moderation, and product thinking.\\n\\n- Case studies from community platforms\\n- Reflections on building for safety\\n- Notes on design experiments",
+            "image": "/res/blog.webp",
+            "imageWidth": 30,
+            "imageHeight": 30,
+            "imageBorderWidth": 0,
+            "imageBackgroundColor": "transparent"
         },
         {
             "id": "travel",
@@ -42,17 +48,21 @@
         {
             "id": "about",
             "kind": "icon",
-            "shape": "triangle",
-            "orientation": "down",
             "label": "About",
-            "color": "#4ab247",
             "x": 320,
             "y": 110,
             "labelOffsetY": -24,
             "labelAnchor": "middle",
             "title": "About Hussam",
             "contentType": "panel",
-            "panelId": "about"
+            "panelId": "about",
+            "image": "/res/about.png",
+            "imageWidth": 30,
+            "imageHeight": 30,
+            "imageCornerRadius": 10,
+            "imageBorderWidth": 0,
+            "imageBorderColor": "#DBD9D1",
+            "imageBackgroundColor": "#DBD9D1"
         },
         {
             "id": "research",
