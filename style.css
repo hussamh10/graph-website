@@ -62,16 +62,32 @@ body {
   margin-top: 32px;
 }
 
+#detail-panel.detail-panel--plain {
+  background: transparent;
+  border-left: none;
+  padding: 0;
+  margin-right: 0;
+  margin-top: 0;
+}
+
 #detail-panel-inner {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
+#detail-panel.detail-panel--plain #detail-panel-inner {
+  gap: 0;
+}
+
 #detail-title {
   margin: 0;
   font-size: 20px;
   font-weight: 600;
+}
+
+#detail-panel.detail-panel--plain #detail-title {
+  display: none;
 }
 
 #detail-content {
