@@ -26,6 +26,33 @@ function wrapLabel(text, maxChars = 50) {
   return lines;
 }
 
+function appendSuperscriptArrows(container, text, svgNS) {
+  const arrowPattern = /↗/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = arrowPattern.exec(text)) !== null) {
+    const before = text.slice(lastIndex, match.index);
+    if (before) {
+      container.appendChild(document.createTextNode(before));
+    }
+
+    const arrowTspan = document.createElementNS(svgNS, "tspan");
+    arrowTspan.setAttribute("class", "node-label-arrow");
+    arrowTspan.setAttribute("baseline-shift", "super");
+    arrowTspan.setAttribute("font-size", "9");
+    arrowTspan.textContent = "↗";
+    container.appendChild(arrowTspan);
+
+    lastIndex = match.index + 1;
+  }
+
+  const remaining = text.slice(lastIndex);
+  if (remaining) {
+    container.appendChild(document.createTextNode(remaining));
+  }
+}
+
 function escapeHtml(str) {
   return str
     .replace(/&/g, "&amp;")
@@ -211,7 +238,11 @@ function createPanelManager(detailContent) {
     detailContent.innerHTML = '<div class="panel-loading">Loading panel…</div>';
 
     const basePath = `panels/${panelId}`;
-    const html = await fetchOptionalText(`${basePath}/panel.html`);
+    const htmlPromise = fetchOptionalText(`${basePath}/panel.html`);
+    const cssPromise = fetchOptionalText(`${basePath}/panel.css`);
+    const jsPromise = fetchOptionalText(`${basePath}/panel.js`);
+
+    const html = await htmlPromise;
     if (token !== loadToken) return;
 
     if (!html) {
@@ -221,12 +252,7 @@ function createPanelManager(detailContent) {
       return;
     }
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "panel-container";
-    wrapper.innerHTML = html;
-    detailContent.replaceChildren(wrapper);
-
-    const cssText = await fetchOptionalText(`${basePath}/panel.css`);
+    const cssText = await cssPromise;
     if (token !== loadToken) return;
     if (cssText) {
       const styleEl = document.createElement("style");
@@ -237,7 +263,12 @@ function createPanelManager(detailContent) {
       currentStyles.push(styleEl);
     }
 
-    const jsText = await fetchOptionalText(`${basePath}/panel.js`);
+    const wrapper = document.createElement("div");
+    wrapper.className = "panel-container";
+    wrapper.innerHTML = html;
+    detailContent.replaceChildren(wrapper);
+
+    const jsText = await jsPromise;
     if (token !== loadToken) return;
     cleanupFn = null;
     if (jsText) {
@@ -498,6 +529,7 @@ function initGraph(graphData) {
     const g = document.createElementNS(svgNS, "g");
     g.setAttribute("transform", `translate(${node.x},${node.y})`);
     g.classList.add("graph-node");
+    const opensUrl = typeof node.url === "string" && node.url.trim().length > 0;
 
     let halfHeight = 0;
 
@@ -654,7 +686,7 @@ function initGraph(graphData) {
         const tspan = document.createElementNS(svgNS, "tspan");
         tspan.setAttribute("x", 0);
         tspan.setAttribute("y", baseY + i * lineHeight);
-        tspan.textContent = line;
+        appendSuperscriptArrows(tspan, line, svgNS);
         text.appendChild(tspan);
       });
 
@@ -663,6 +695,13 @@ function initGraph(graphData) {
 
     g.addEventListener("click", (event) => {
       event.stopPropagation();
+      if (opensUrl) {
+        const target = node.openInNewTab === false ? "_self" : "_blank";
+        const newWindow = window.open(node.url, target, "noopener,noreferrer");
+        if (newWindow && target === "_blank") {
+          newWindow.opener = null;
+        }
+      }
       showNodeDetail(node.id);
       revealNeighbors(node.id);
       centerNode(node.id);

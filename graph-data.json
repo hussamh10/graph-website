@@ -22,9 +22,9 @@
             "labelOffsetY": 28,
             "labelAnchor": "middle",
             "title": "Latest writing",
-            "contentType": "markdown",
-            "content": "Stay up to date with essays about online communities, moderation, and product thinking.\\n\\n- Case studies from community platforms\\n- Reflections on building for safety\\n- Notes on design experiments",
-            "image": "/res/blog.webp",
+            "contentType": "panel",
+            "panelId": "blog",
+            "image": "/res/blog.png",
             "imageWidth": 30,
             "imageHeight": 30,
             "imageBorderWidth": 0,
@@ -37,13 +37,47 @@
             "orientation": "up",
             "label": "Travel",
             "color": "#45b5ff",
-            "x": 260,
-            "y": 290,
+            "x": 150,
+            "y": 280,
             "labelOffsetY": 28,
             "labelAnchor": "middle",
             "title": "Travel log",
             "contentType": "markdown",
             "content": "Moments from recent adventures and the lessons they brought.\\n\\n**Highlights**\\n\\n1. Mapping neighborhoods through food\\n2. Photographing urban textures\\n3. Meeting local researchers"
+        },
+        {
+            "id": "alpenglow",
+            "kind": "label",
+            "label": "Alpenglow ↗",
+            "x": 120,
+            "y": 370,
+            "labelOffsetY": 0,
+            "labelAnchor": "middle",
+            "image": "/res/alpenglow.png",
+            "imageWidth": 30,
+            "imageHeight": 30,
+            "imageBorderWidth": 0,
+            "imageBackgroundColor": "transparent",
+            "title": " ",
+            "contentType": "markdown",
+            "url": "https://hussamhabib.com/writings/alpenglow"
+        },
+        {
+            "id": "ragbrai",
+            "kind": "label",
+            "label": "RAGBRAI ↗",
+            "x": 250,
+            "y": 380,
+            "labelOffsetY": 0,
+            "image": "/res/ragbrai.png",
+            "imageWidth": 30,
+            "imageHeight": 30,
+            "imageBorderWidth": 0,
+            "imageBackgroundColor": "transparent",
+            "labelAnchor": "middle",
+            "title": " ",
+            "contentType": "markdown",
+            "url": "https://hussamhabib.com/writings/ragbrai"
         },
         {
             "id": "about",
@@ -55,7 +89,7 @@
             "labelAnchor": "middle",
             "title": "About Hussam",
             "contentType": "panel",
-            "panelId": "about",
+            "panelId": "about-2",
             "image": "/res/about.png",
             "imageWidth": 30,
             "imageHeight": 30,
@@ -146,7 +180,7 @@
             "target": "blog"
         },
         {
-            "source": "root",
+            "source": "blog",
             "target": "travel"
         },
         {
@@ -176,6 +210,14 @@
         {
             "source": "audit",
             "target": "paper3"
+        },
+        {
+            "source": "travel",
+            "target": "alpenglow"
+        },
+        {
+            "source": "travel",
+            "target": "ragbrai"
         }
     ]
 }
