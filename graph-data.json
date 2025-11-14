@@ -60,7 +60,7 @@
             "imageBackgroundColor": "transparent",
             "title": " ",
             "contentType": "markdown",
-            "url": "https://hussamhabib.com/writings/alpenglow"
+            "url": "https://hussamhabib.com/blog/alpenglow"
         },
         {
             "id": "ragbrai",
@@ -77,7 +77,7 @@
             "labelAnchor": "middle",
             "title": " ",
             "contentType": "markdown",
-            "url": "https://hussamhabib.com/writings/ragbrai"
+            "url": "https://hussamhabib.com/blog/ragbrai"
         },
         {
             "id": "about",
@@ -114,64 +114,185 @@
             "content": "<p>Investigations into how we can build safer, more equitable platforms.</p><ul><li>Moderation tooling</li><li>Responsible audits</li><li>Community resilience</li></ul>"
         },
         {
-            "id": "mod",
+            "id": "privacy",
             "kind": "label",
-            "label": "Moderation interventions",
-            "x": 510,
+            "label": "Online\nPrivacy",
+            "x": 490,
             "y": 290,
             "labelOffsetY": 0,
             "labelAnchor": "middle",
-            "title": "Making moderation better",
+            "title": "Online Privacy",
             "contentType": "markdown",
-            "content": "Designing interventions that keep communities healthy without burning out moderators."
+            "content": "Studying how we can protect our online privacy and data."
         },
         {
-            "id": "audit",
+            "id": "smp",
             "kind": "label",
-            "label": "Auditing algorithms",
-            "x": 520,
-            "y": 170,
+            "label": "Social Media Platforms",
+            "x": 480,
+            "y": 90,
             "labelOffsetY": 0,
             "labelAnchor": "middle",
-            "title": "Algorithmic audits",
+            "title": "Social Media Platforms",
             "contentType": "markdown",
             "content": "Studying feedback loops, measuring impact, and building transparent review practices."
         },
         {
-            "id": "paper1",
-            "kind": "doc",
-            "label": "Proactive interventions",
-            "x": 530,
-            "y": 50,
-            "labelOffsetX": 22,
-            "labelOffsetY": 5,
-            "labelAnchor": "start",
-            "title": "Paper: Proactive Interventions",
-            "contentType": "panel",
-            "panelId": "paper1"
-        },
-        {
-            "id": "paper2",
-            "kind": "doc",
-            "label": "Reddit communities",
-            "x": 640,
-            "y": 100,
-            "labelOffsetX": 22,
-            "labelOffsetY": 5,
-            "labelAnchor": "start",
-            "title": "Paper: Community Dashboards",
+            "id": "mod",
+            "kind": "label",
+            "label": "Online moderation",
+            "x": 580,
+            "y": -40,
+            "labelOffsetY": 0,
+            "labelAnchor": "middle",
+            "title": "Online moderation",
             "contentType": "markdown",
-            "content": "Exploring dashboards that give moderators predictive signals about their spaces."
+            "content": "Studying how moderation works and how it can be improved."
         },
         {
-            "id": "paper3",
-            "kind": "doc",
-            "label": "YouTube emotional reinforcement",
-            "x": 730,
+            "id": "user",
+            "kind": "label",
+            "label": "Understanding user behavior",
+            "x": 590,
+            "y": 80,
+            "labelOffsetY": 0,
+            "labelAnchor": "middle",
+            "title": "Understanding user behavior",
+            "contentType": "markdown",
+            "content": "Studying how users behave and how they can be understood."
+        },
+        {
+            "id": "audit",
+            "kind": "label",
+            "label": "Understanding algorithm behavior",
+            "x": 560,
             "y": 190,
-            "title": "Working paper",
+            "labelOffsetY": 0,
+            "labelAnchor": "middle",
+            "title": "Understanding algorithm behavior",
             "contentType": "markdown",
-            "content": "In-progress research on collaboration between trust & safety teams and community leaders."
+            "content": "Studying how algorithms work and how they can be understood."
+        },
+        {
+            "id": "p_evo",
+            "kind": "doc",
+            "label": "How do online communities evolve?",
+            "x": 605,
+            "y": 29,
+            "labelAnchor": "middle",
+            "title": "How do online communities evolve?",
+            "contentType": "panel",
+            "panelId": "p_evo"
+        },
+        {
+            "id": "p_react",
+            "kind": "doc",
+            "label": "Does Reddit perform reactive moderation?",
+            "x": 686,
+            "y": -89,
+            "labelAnchor": "middle",
+            "title": "Does Reddit perform reactive moderation?",
+            "contentType": "panel",
+            "panelId": "p_react"
+        },
+        {
+            "id": "p_radical",
+            "kind": "doc",
+            "label": "Online pathways to adopt radical ideologies",
+            "x": 0,
+            "y": 0,
+            "labelAnchor": "middle",
+            "title": "Online pathways to adopt radical ideologies",
+            "contentType": "panel",
+            "panelId": "p_radical"
+        },
+        {
+            "id": "p_radical",
+            "kind": "doc",
+            "label": "Online pathways to adopt radical ideologies",
+            "x": 721,
+            "y": 37,
+            "labelAnchor": "middle",
+            "title": "Online pathways to adopt radical ideologies",
+            "contentType": "panel",
+            "panelId": "p_radical"
+        },
+        {
+            "id": "p_google",
+            "kind": "doc",
+            "label": "How does Google reinforce ideology?",
+            "x": 668,
+            "y": 119,
+            "labelAnchor": "middle",
+            "title": "How does Google reinforce ideology?",
+            "contentType": "panel",
+            "panelId": "p_google"
+        },
+        {
+            "id": "p_yt_emo",
+            "kind": "doc",
+            "label": "How does YouTube reinforce emotions?",
+            "x": 602,
+            "y": 250,
+            "labelAnchor": "middle",
+            "title": "How does YouTube reinforce emotions?",
+            "contentType": "panel",
+            "panelId": "p_yt_emo"
+        },
+        {
+            "id": "p_aceap",
+            "kind": "doc",
+            "label": "Platform behaviors in curating home feeds.",
+            "x": 713,
+            "y": 200,
+            "labelAnchor": "middle",
+            "title": "Platform behaviors in curating home feeds.",
+            "contentType": "panel",
+            "panelId": "p_aceap"
+        }, 
+        {
+            "id": "p_covid",
+            "kind": "doc",
+            "label": "COVID denial narratives on Facebook by victims.",
+            "x": 799,
+            "y": 71,
+            "labelAnchor": "middle",
+            "title": "COVID denial narratives on Facebook by victims.",
+            "contentType": "panel",
+            "panelId": "p_covid"
+        },
+        {
+            "id": "?_curation",
+            "kind": "question",
+            "label": "Do curation algorithms cause dysfunction?",
+            "x": 0,
+            "y": 0,
+            "labelAnchor": "middle",
+            "title": "Do curation algorithms cause dysfunction?",
+            "contentType": "panel",
+            "panelId": "?_curation"
+        },
+        {
+            "id": "t_health",
+            "kind": "tool",
+            "label": "Community health monitor",
+            "x": 0,
+            "y": 0,
+            "labelAnchor": "middle",
+            "title": "Do moderation systems cause dysfunction?",
+            "contentType": "panel",
+            "panelId": "?_moderation"
+        },
+        {
+            "id": "t_audit",
+            "kind": "tool",
+            "label": "Platform audit tool",
+            "x": 0,
+            "y": 0,
+            "labelAnchor": "middle",
+            "title": "Platform audit tool",
+            "contentType": "panel",
+            "panelId": "t_audit"
         }
     ],
     "links": [
@@ -193,23 +314,67 @@
         },
         {
             "source": "research",
-            "target": "mod"
+            "target": "privacy"
         },
         {
             "source": "research",
+            "target": "smp"
+        },
+        {
+            "source": "smp",
+            "target": "mod"
+        },
+        {
+            "source": "smp",
             "target": "audit"
         },
         {
-            "source": "audit",
-            "target": "paper1"
+            "source": "smp",
+            "target": "user"
+        },
+        {
+            "source": "mod",
+            "target": "p_evo"
+        },
+        {
+            "source": "user",
+            "target": "p_evo"
+        },
+        {
+            "source": "mod",
+            "target": "p_react"
+        },
+        {
+            "source": "user",
+            "target": "p_radical"
+        },
+        {
+            "source": "user",
+            "target": "p_google"
         },
         {
             "source": "audit",
-            "target": "paper2"
+            "target": "p_google"
         },
         {
             "source": "audit",
-            "target": "paper3"
+            "target": "p_yt_emo"
+        },
+        {
+            "source": "audit",
+            "target": "p_aceap"
+        },
+        {
+            "source": "user",
+            "target": "p_covid"
+        },
+        {
+            "source": "p_evo",
+            "target": "t_health"
+        },
+        {
+            "source": "p_aceap",
+            "target": "t_audit"
         },
         {
             "source": "travel",
@@ -221,3 +386,4 @@
         }
     ]
 }
+

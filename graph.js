@@ -7,22 +7,50 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function wrapLabel(text, maxChars = 50) {
+function wrapLabel(text, maxChars = 20) {
   if (!text) return [];
   const words = text.trim().split(/\s+/);
   const lines = [];
   let current = "";
 
-  for (const w of words) {
-    const test = current ? current + " " + w : w;
-    if (test.length > maxChars && current) {
+  const flushCurrent = () => {
+    if (current) {
       lines.push(current);
-      current = w;
-    } else {
+      current = "";
+    }
+  };
+
+  for (const word of words) {
+    if (word.length > maxChars) {
+      flushCurrent();
+      let index = 0;
+      while (index < word.length) {
+        const segment = word.slice(index, index + maxChars);
+        index += maxChars;
+        if (segment.length === maxChars && index < word.length) {
+          lines.push(segment);
+        } else {
+          current = segment;
+        }
+      }
+      continue;
+    }
+
+    const test = current ? `${current} ${word}` : word;
+    if (test.length <= maxChars) {
       current = test;
+      continue;
+    }
+
+    if (current) {
+      flushCurrent();
+      current = word;
+    } else {
+      lines.push(word);
     }
   }
-  if (current) lines.push(current);
+
+  flushCurrent();
   return lines;
 }
 
@@ -674,7 +702,7 @@ function initGraph(graphData) {
       highlightedNodes.size === 0 || highlightedNodes.has(node.id) ? "1" : "0.15";
 
     if (node.label && node.label.trim().length > 0) {
-      const lines = wrapLabel(node.label, 50);
+      const lines = wrapLabel(node.label);
       const text = document.createElementNS(svgNS, "text");
       text.setAttribute("class", "node-label");
       text.setAttribute("text-anchor", "middle");
