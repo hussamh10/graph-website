@@ -555,8 +555,9 @@ function initGraph(graphData) {
 
   function createNodeElement(node) {
     const g = document.createElementNS(svgNS, "g");
-    g.setAttribute("transform", `translate(${node.x},${node.y})`);
     g.classList.add("graph-node");
+    g.dataset.nodeId = node.id;
+    g.setAttribute("transform", `translate(${node.x},${node.y})`);
     const opensUrl = typeof node.url === "string" && node.url.trim().length > 0;
 
     let halfHeight = 0;
@@ -882,6 +883,12 @@ function initGraph(graphData) {
 
   function pointerDown(e) {
     if (e.button !== 0) return;
+
+    // Don't initiate panning when interacting with a node so that click events fire
+    if (e.target.closest && e.target.closest(".graph-node")) {
+      return;
+    }
+
     isPanning = true;
     startX = e.clientX;
     startY = e.clientY;
