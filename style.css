@@ -101,16 +101,18 @@ body {
   max-width: 30rem;
   margin-left: auto;
   margin-right: auto;
+  padding: 0 1rem;
 }
 
 #detail-panel.detail-panel--markdown #detail-content {
   font-size: 15px;
   line-height: 1.65;
   color: #3b352c;
+  padding: 0 1rem;
 }
 
 #detail-panel.detail-panel--markdown #detail-content > * + * {
-  margin-top: 16px;
+  margin-top: 10px;
 }
 
 #detail-panel.detail-panel--markdown #detail-content ul,
@@ -122,6 +124,15 @@ body {
 #detail-panel.detail-panel--markdown #detail-content ul li,
 #detail-panel.detail-panel--markdown #detail-content ol li {
   margin-bottom: 8px;
+}
+
+#detail-panel.detail-panel--markdown #detail-content a {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+#detail-panel.detail-panel--markdown #detail-content a:hover {
+  color: #004499;
 }
 
 #detail-panel.detail-panel--html #detail-content {

@@ -91,7 +91,29 @@ function escapeHtml(str) {
 }
 
 function formatInlineMarkdown(text) {
-  let escaped = escapeHtml(text);
+  // Extract and replace links with placeholders before HTML escaping
+  const linkPlaceholders = [];
+  let processed = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
+    const placeholder = `__LINK_PLACEHOLDER_${linkPlaceholders.length}__`;
+    linkPlaceholders.push({
+      text: escapeHtml(linkText.trim()),
+      url: escapeHtml(url.trim())
+    });
+    return placeholder;
+  });
+  
+  // Escape HTML for the remaining text
+  let escaped = escapeHtml(processed);
+  
+  // Replace placeholders with actual link HTML
+  linkPlaceholders.forEach((link, index) => {
+    escaped = escaped.replace(
+      `__LINK_PLACEHOLDER_${index}__`,
+      `<a href="${link.url}" target="_blank" rel="noopener noreferrer">${link.text}</a>`
+    );
+  });
+  
+  // Process other formatting
   escaped = escaped.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   escaped = escaped.replace(/__(.+?)__/g, "<strong>$1</strong>");
   escaped = escaped.replace(/\*(.+?)\*/g, "<em>$1</em>");
@@ -237,6 +259,7 @@ function createPanelManager(detailContent) {
 
   function clearDataset() {
     delete detailContent.dataset.panelId;
+    delete detailContent.dataset.panelTemplate;
   }
 
   function clearPanel({ resetContent = true } = {}) {
@@ -263,14 +286,33 @@ function createPanelManager(detailContent) {
 
     detailContent.classList.add("panel-active");
     detailContent.dataset.panelId = panelId;
+    const templateId =
+      node && typeof node.panelTemplate === "string" && node.panelTemplate.trim().length > 0
+        ? node.panelTemplate.trim()
+        : null;
+    if (templateId) {
+      detailContent.dataset.panelTemplate = templateId;
+    } else {
+      delete detailContent.dataset.panelTemplate;
+    }
     detailContent.innerHTML = '<div class="panel-loading">Loading panel…</div>';
 
     const basePath = `panels/${panelId}`;
-    const htmlPromise = fetchOptionalText(`${basePath}/panel.html`);
-    const cssPromise = fetchOptionalText(`${basePath}/panel.css`);
-    const jsPromise = fetchOptionalText(`${basePath}/panel.js`);
+    const templateBasePath = templateId ? `panels/templates/${templateId}` : null;
 
-    const html = await htmlPromise;
+    async function loadFirstAvailableHtml() {
+      const sources = [];
+      if (templateBasePath) sources.push(`${templateBasePath}/panel.html`);
+      sources.push(`${basePath}/panel.html`);
+      for (const src of sources) {
+        const htmlText = await fetchOptionalText(src);
+        if (token !== loadToken) return null;
+        if (htmlText) return htmlText;
+      }
+      return null;
+    }
+
+    const html = await loadFirstAvailableHtml();
     if (token !== loadToken) return;
 
     if (!html) {
@@ -280,9 +322,14 @@ function createPanelManager(detailContent) {
       return;
     }
 
-    const cssText = await cssPromise;
-    if (token !== loadToken) return;
-    if (cssText) {
+    const cssSources = [];
+    if (templateBasePath) cssSources.push(`${templateBasePath}/panel.css`);
+    cssSources.push(`${basePath}/panel.css`);
+
+    for (const cssPath of cssSources) {
+      const cssText = await fetchOptionalText(cssPath);
+      if (token !== loadToken) return;
+      if (!cssText) continue;
       const styleEl = document.createElement("style");
       styleEl.textContent = cssText;
       styleEl.dataset.panelId = panelId;
@@ -296,35 +343,40 @@ function createPanelManager(detailContent) {
     wrapper.innerHTML = html;
     detailContent.replaceChildren(wrapper);
 
-    const jsText = await jsPromise;
-    if (token !== loadToken) return;
-    cleanupFn = null;
-    if (jsText) {
+    const jsSources = [];
+    if (templateBasePath) jsSources.push(`${templateBasePath}/panel.js`);
+    jsSources.push(`${basePath}/panel.js`);
+
+    const cleanupStack = [];
+    for (const jsPath of jsSources) {
+      const jsText = await fetchOptionalText(jsPath);
+      if (token !== loadToken) return;
+      if (!jsText) continue;
       try {
         const factory = new Function("container", "context", jsText);
-        const context = { panelId, node };
+        const context = { panelId, node, templateId };
         const result = factory(wrapper, context);
         if (typeof result === "function") {
-          cleanupFn = () => {
-            try {
-              result();
-            } catch (error) {
-              console.error(`Error running cleanup for panel ${panelId}`, error);
-            }
-          };
+          cleanupStack.push(result);
         } else if (result && typeof result === "object" && typeof result.cleanup === "function") {
-          cleanupFn = () => {
-            try {
-              result.cleanup();
-            } catch (error) {
-              console.error(`Error running cleanup for panel ${panelId}`, error);
-            }
-          };
+          cleanupStack.push(() => result.cleanup());
         }
       } catch (error) {
         console.error(`Error executing script for panel ${panelId}`, error);
       }
     }
+    cleanupFn =
+      cleanupStack.length > 0
+        ? () => {
+            for (let i = cleanupStack.length - 1; i >= 0; i -= 1) {
+              try {
+                cleanupStack[i]();
+              } catch (error) {
+                console.error(`Error running cleanup for panel ${panelId}`, error);
+              }
+            }
+          }
+        : null;
 
     activePanelId = panelId;
   }
@@ -358,6 +410,9 @@ function initGraph(graphData) {
 
   rootGroup.appendChild(linkLayer);
   rootGroup.appendChild(nodeLayer);
+
+  const markdownCache = new Map();
+  let markdownLoadToken = 0;
 
   const nodeById = {};
   graphData.nodes.forEach((n) => (nodeById[n.id] = n));
@@ -529,7 +584,7 @@ function initGraph(graphData) {
     updateHighlights(nodeId);
     activeNodeId = nodeId;
 
-    const title = node.title || node.label || node.id;
+    const title = ""; // node.title || node.label || node.id;
     const isPanelContent = node.contentType === "panel";
     const isHtmlContent = node.contentType === "html";
     const isMarkdownContent = !isPanelContent && !isHtmlContent;
@@ -548,7 +603,51 @@ function initGraph(graphData) {
       if (isHtmlContent) {
         detailContent.innerHTML = node.content || "";
       } else {
-        detailContent.innerHTML = markdownToHtml(node.content || "");
+        const fallbackMarkdown =
+          typeof node.content === "string" && node.content.trim().length > 0 ? node.content : "";
+        const renderMarkdown = (markdownText) => {
+          const finalText =
+            typeof markdownText === "string" && markdownText.length > 0
+              ? markdownText
+              : fallbackMarkdown;
+          if (finalText) {
+            detailContent.innerHTML = markdownToHtml(finalText);
+          } else {
+            detailContent.innerHTML =
+              '<div class="panel-loading">Content coming soon. Add markdown text for this node.</div>';
+          }
+        };
+
+        const markdownPath =
+          typeof node.markdownFile === "string" && node.markdownFile.trim().length > 0
+            ? node.markdownFile.trim()
+            : null;
+
+        if (markdownPath) {
+          const cachedMarkdown = markdownCache.get(markdownPath);
+          if (cachedMarkdown !== undefined) {
+            renderMarkdown(cachedMarkdown);
+          } else {
+            const token = ++markdownLoadToken;
+            detailContent.innerHTML = '<div class="panel-loading">Loading content…</div>';
+            fetchOptionalText(markdownPath).then((text) => {
+              if (token !== markdownLoadToken || activeNodeId !== node.id) {
+                return;
+              }
+              const normalized = typeof text === "string" ? text : fallbackMarkdown;
+              if (typeof text === "string") {
+                markdownCache.set(markdownPath, text);
+              }
+              if (normalized) {
+                renderMarkdown(normalized);
+              } else {
+                detailContent.innerHTML = `<div class="panel-error">Markdown file "${markdownPath}" could not be loaded.</div>`;
+              }
+            });
+          }
+        } else {
+          renderMarkdown(fallbackMarkdown);
+        }
       }
     }
   }
@@ -690,11 +789,17 @@ function initGraph(graphData) {
       line3.setAttribute("class", "doc-line");
       shapeGroup.appendChild(line3);
     } else if (node.kind === "label") {
-      const r = 10;
+      const r = typeof node.radius === "number" ? node.radius : 10;
       halfHeight = r;
       const circle = document.createElementNS(svgNS, "circle");
       circle.setAttribute("r", r);
       circle.setAttribute("class", "node-label-shape");
+      // Remove border
+      circle.style.stroke = "none";
+      // Apply custom color if provided (use style to override CSS)
+      if (node.color) {
+        circle.style.fill = node.color;
+      }
       shapeGroup.appendChild(circle);
     }
 
@@ -813,7 +918,7 @@ function initGraph(graphData) {
   }
 
   showNodeDetail("root");
-  renderGraph();
+  revealNeighbors("root");
 
   const container = document.getElementById("graph-container");
   let isPanning = false;

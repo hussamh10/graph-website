@@ -7,8 +7,7 @@
             "y": 190,
             "title": "Welcome",
             "contentType": "panel",
-            "panelId": "about",
-            "content": "# Hussam Habib\\n\\nExplore the topics around my work, travels, and writing by clicking the nodes in the graph."
+            "panelId": "about"
         },
         {
             "id": "blog",
@@ -43,7 +42,12 @@
             "labelAnchor": "middle",
             "title": "Travel log",
             "contentType": "markdown",
-            "content": "Moments from recent adventures and the lessons they brought.\\n\\n**Highlights**\\n\\n1. Mapping neighborhoods through food\\n2. Photographing urban textures\\n3. Meeting local researchers"
+            "image": "/res/travel.png",
+            "imageWidth": 30,
+            "imageHeight": 30,
+            "imageBorderWidth": 0,
+            "imageBackgroundColor": "transparent",
+            "markdownFile": "panels/markdown/travel.md"
         },
         {
             "id": "alpenglow",
@@ -95,8 +99,25 @@
             "imageHeight": 30,
             "imageCornerRadius": 10,
             "imageBorderWidth": 0,
-            "imageBorderColor": "#DBD9D1",
-            "imageBackgroundColor": "#DBD9D1"
+            "imageBorderColor": "transparent",
+            "imageBackgroundColor": "transparent"
+        },
+        {
+            "id": "things",
+            "kind": "icon",
+            "label": "Things",
+            "x": 273,
+            "y": 310,
+            "labelAnchor": "middle",
+            "image": "/res/things.webp",
+            "imageWidth": 30,
+            "imageHeight": 30,
+            "imageCornerRadius": 10,
+            "imageBorderWidth": 0,
+            "imageBorderColor": "transparent",
+            "imageBackgroundColor": "transparent",
+            "contentType": "markdown",
+            "markdownFile": "panels/markdown/things.md"
         },
         {
             "id": "research",
@@ -104,14 +125,14 @@
             "shape": "triangle",
             "orientation": "up",
             "label": "Research",
-            "color": "#f2a656",
+            "color": "#fb6f92",
             "x": 380,
             "y": 220,
             "labelOffsetY": 28,
             "labelAnchor": "middle",
             "title": "Research Themes",
-            "contentType": "html",
-            "content": "<p>Investigations into how we can build safer, more equitable platforms.</p><ul><li>Moderation tooling</li><li>Responsible audits</li><li>Community resilience</li></ul>"
+            "contentType": "markdown",
+            "markdownFile": "panels/markdown/research.md"
         },
         {
             "id": "privacy",
@@ -120,10 +141,12 @@
             "x": 490,
             "y": 290,
             "labelOffsetY": 0,
+            "radius": 6,
+            "color": "#000",
             "labelAnchor": "middle",
             "title": "Online Privacy",
             "contentType": "markdown",
-            "content": "Studying how we can protect our online privacy and data."
+            "markdownFile": "panels/markdown/privacy.md"
         },
         {
             "id": "smp",
@@ -131,11 +154,13 @@
             "label": "Social Media Platforms",
             "x": 480,
             "y": 90,
+            "radius": 10,
+            "color": "#31572c",
             "labelOffsetY": 0,
             "labelAnchor": "middle",
             "title": "Social Media Platforms",
             "contentType": "markdown",
-            "content": "Studying feedback loops, measuring impact, and building transparent review practices."
+            "markdownFile": "panels/markdown/smp.md"
         },
         {
             "id": "mod",
@@ -143,11 +168,13 @@
             "label": "Online moderation",
             "x": 580,
             "y": -40,
+            "radius": 6,
+            "color": "#c1121f",
             "labelOffsetY": 0,
             "labelAnchor": "middle",
             "title": "Online moderation",
             "contentType": "markdown",
-            "content": "Studying how moderation works and how it can be improved."
+            "markdownFile": "panels/markdown/mod.md"
         },
         {
             "id": "user",
@@ -155,11 +182,13 @@
             "label": "Understanding user behavior",
             "x": 590,
             "y": 80,
+            "radius": 7,
+            "color": "#0077b6",
             "labelOffsetY": 0,
             "labelAnchor": "middle",
             "title": "Understanding user behavior",
             "contentType": "markdown",
-            "content": "Studying how users behave and how they can be understood."
+            "markdownFile": "panels/markdown/user.md"
         },
         {
             "id": "audit",
@@ -167,33 +196,49 @@
             "label": "Understanding algorithm behavior",
             "x": 560,
             "y": 190,
+            "radius": 10,
+            "color": "#fb8500",
             "labelOffsetY": 0,
             "labelAnchor": "middle",
             "title": "Understanding algorithm behavior",
             "contentType": "markdown",
-            "content": "Studying how algorithms work and how they can be understood."
+            "markdownFile": "panels/markdown/audit.md"
         },
         {
             "id": "p_evo",
             "kind": "doc",
             "label": "How do online communities evolve?",
-            "x": 635,
-            "y": 0,
+            "x": 700,
+            "y": -100,
             "labelAnchor": "middle",
             "title": "How do online communities evolve?",
             "contentType": "panel",
-            "panelId": "p_evo"
+            "panelId": "p_evo",
+            "panelTemplate": "paper-preview",
+            "panelData": {
+                "link": "https://ojs.aaai.org/index.php/ICWSM/article/download/19290/19062",
+                "download": "panels/p_evo/paper.pdf",
+                "image": "panels/papers/evo.png",
+                "imageAlt": "Community interventions PDF preview"
+            }
         },
         {
             "id": "p_react",
             "kind": "doc",
             "label": "Does Reddit perform reactive moderation?",
             "x": 696,
-            "y": -120,
+            "y": -190,
             "labelAnchor": "middle",
             "title": "Does Reddit perform reactive moderation?",
             "contentType": "panel",
-            "panelId": "p_react"
+            "panelId": "p_react",
+            "panelTemplate": "paper-preview",
+            "panelData": {
+                "link": "https://ojs.aaai.org/index.php/ICWSM/article/download/19291/19063",
+                "download": "panels/p_react/paper.pdf",
+                "image": "panels/papers/react.png",
+                "imageAlt": "Community interventions PDF preview"
+            }
         },
         {
             "id": "p_radical",
@@ -204,7 +249,14 @@
             "labelAnchor": "middle",
             "title": "Online pathways to adopt radical ideologies",
             "contentType": "panel",
-            "panelId": "p_radical"
+            "panelId": "p_radical",
+            "panelTemplate": "paper-preview",
+            "panelData": {
+                "link": "https://dl.acm.org/doi/pdf/10.1145/3555551?utm_source=miragenews&utm_medium=miragenews&utm_campaign=news",
+                "download": "panels/p_radical/paper.pdf",
+                "image": "panels/papers/radical.png",
+                "imageAlt": "Community interventions PDF preview"
+            }
         },
         {
             "id": "p_google",
@@ -215,7 +267,14 @@
             "labelAnchor": "middle",
             "title": "How does Google reinforce ideology?",
             "contentType": "panel",
-            "panelId": "p_google"
+            "panelId": "p_google",
+            "panelTemplate": "paper-preview",
+            "panelData": {
+                "link": "https://dl.acm.org/doi/pdf/10.1145/3757656",
+                "download": "panels/p_google/paper.pdf",
+                "image": "panels/papers/google.png",
+                "imageAlt": "Community interventions PDF preview"
+            }
         },
         {
             "id": "p_yt_emo",
@@ -226,7 +285,14 @@
             "labelAnchor": "middle",
             "title": "How does YouTube reinforce emotions?",
             "contentType": "panel",
-            "panelId": "p_yt_emo"
+            "panelId": "p_yt_emo",
+            "panelTemplate": "paper-preview",
+            "panelData": {
+                "link": "https://arxiv.org/html/2501.15048v1",
+                "download": "panels/p_yt_emo/paper.pdf",
+                "image": "panels/papers/yt_emo.png",
+                "imageAlt": "Community interventions PDF preview"
+            }
         },
         {
             "id": "p_aceap",
@@ -237,7 +303,14 @@
             "labelAnchor": "middle",
             "title": "Platform behaviors in curating home feeds.",
             "contentType": "panel",
-            "panelId": "p_aceap"
+            "panelId": "p_aceap",
+            "panelTemplate": "paper-preview",
+            "panelData": {
+                "link": "https://arxiv.org/pdf/2407.07227",
+                "download": "panels/p_aceap/paper.png",
+                "image": "panels/papers/aceap.png",
+                "imageAlt": "Community interventions PDF preview"
+            }
         }, 
         {
             "id": "p_covid",
@@ -248,7 +321,14 @@
             "labelAnchor": "middle",
             "title": "COVID denial narratives on Facebook by victims.",
             "contentType": "panel",
-            "panelId": "p_covid"
+            "panelId": "p_covid",
+            "panelTemplate": "paper-preview",
+            "panelData": {
+                "link": "https://ojs.aaai.org/index.php/ICWSM/article/download/22147/21926",
+                "download": "panels/p_covid/paper.pdf",
+                "image": "panels/papers/morbid.png",
+                "imageAlt": "Community interventions PDF preview"
+            }
         },
         {
             "id": "?_curation",
@@ -270,8 +350,8 @@
             "imageBorderWidth": 0,
             "imageBackgroundColor": "transparent",
             "label": "Community health monitor",
-            "x": 756,
-            "y": -10,
+            "x": 826,
+            "y": -140,
             "labelAnchor": "middle",
             "title": "Do moderation systems cause dysfunction?",
             "contentType": "panel",
@@ -306,6 +386,10 @@
         {
             "source": "root",
             "target": "about"
+        },
+        {
+            "source": "root",
+            "target": "things"
         },
         {
             "source": "root",
