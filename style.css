@@ -18,7 +18,7 @@ body {
 }
 
 .site-header {
-  font-size: 14px;
+  font-size: clamp(13px, 1.1vw, 15px);
   font-family: "Helvetica Neue", Arial;
   padding: clamp(12px, 1.4vw, 16px);
 }
@@ -134,25 +134,25 @@ body {
 }
 
 #detail-panel.detail-panel--markdown #detail-content {
-  font-size: 15px;
+  font-size: clamp(14px, 1.3vw, 16px);
   line-height: 1.65;
   color: #3b352c;
   padding: 0 1rem;
 }
 
 #detail-panel.detail-panel--markdown #detail-content > * + * {
-  margin-top: 10px;
+  margin-top: clamp(8px, 1vw, 12px);
 }
 
 #detail-panel.detail-panel--markdown #detail-content ul,
 #detail-panel.detail-panel--markdown #detail-content ol {
   margin-left: 0;
-  padding-left: 18px;
+  padding-left: clamp(16px, 1.6vw, 22px);
 }
 
 #detail-panel.detail-panel--markdown #detail-content ul li,
 #detail-panel.detail-panel--markdown #detail-content ol li {
-  margin-bottom: 8px;
+  margin-bottom: clamp(6px, 0.9vw, 10px);
 }
 
 #detail-panel.detail-panel--markdown #detail-content a {
@@ -167,9 +167,9 @@ body {
 #detail-panel.detail-panel--html #detail-content {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  font-size: 15px;
-  line-height: 1.6;
+  gap: clamp(14px, 1.9vw, 22px);
+  font-size: clamp(14px, 1.25vw, 16px);
+  line-height: 1.65;
   color: #3b352c;
 }
 
@@ -183,14 +183,14 @@ body {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 12px;
+  gap: clamp(8px, 1.1vw, 12px) clamp(10px, 1.5vw, 14px);
 }
 
 #detail-panel.detail-panel--html #detail-content li {
-  padding: 6px 14px;
+  padding: clamp(6px, 1vw, 10px) clamp(12px, 1.7vw, 16px);
   border-radius: 999px;
   background: rgba(242, 221, 181, 0.55);
-  font-size: 13px;
+  font-size: clamp(12px, 1.05vw, 14px);
   letter-spacing: 0.02em;
   color: #2f261d;
 }
@@ -199,7 +199,7 @@ body {
 #detail-panel-inner {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: clamp(12px, 1.4vw, 18px);
 }
 
 #detail-panel.detail-panel--plain #detail-panel-inner {
@@ -208,7 +208,7 @@ body {
 
 #detail-title {
   margin: 0;
-  font-size: 20px;
+  font-size: clamp(18px, 1.5vw, 22px);
   font-weight: 600;
 }
 
@@ -217,8 +217,8 @@ body {
 }
 
 #detail-content {
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: clamp(14px, 1.25vw, 16px);
+  line-height: 1.65;
   color: #444;
 }
 
@@ -244,7 +244,7 @@ body {
   position: relative;
   border-radius: 4px;
   max-height: 100vh;
-  padding: 28px;
+  padding: clamp(18px, 2vw, 28px);
   overflow: hidden;
 }
 
@@ -253,10 +253,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 160px;
-  padding: 16px;
+  min-height: clamp(120px, 18vh, 200px);
+  padding: clamp(12px, 1.5vw, 20px);
   text-align: center;
-  font-size: 14px;
+  font-size: clamp(13px, 1.1vw, 15px);
   color: #666;
 }
 
@@ -270,22 +270,22 @@ body {
 
 #detail-content:not(.panel-active) p {
   margin-top: 0;
-  margin-bottom: 12px;
+  margin-bottom: clamp(10px, 1.2vw, 14px);
 }
 
 #detail-content:not(.panel-active) h3,
 #detail-content:not(.panel-active) h4,
 #detail-content:not(.panel-active) h5,
 #detail-content:not(.panel-active) h6 {
-  margin-top: 24px;
-  margin-bottom: 12px;
+  margin-top: clamp(18px, 2.3vw, 26px);
+  margin-bottom: clamp(10px, 1.2vw, 14px);
 }
 
 #detail-content:not(.panel-active) ul,
 #detail-content:not(.panel-active) ol {
-  padding-left: 20px;
+  padding-left: clamp(18px, 2vw, 24px);
   margin-top: 0;
-  margin-bottom: 12px;
+  margin-bottom: clamp(10px, 1.2vw, 14px);
 }
 
 @media (max-width: 900px) {
@@ -312,7 +312,7 @@ body {
     min-width: 0;
     max-height: none;
     margin: 0;
-    padding: 18px;
+    padding: clamp(14px, 3vw, 20px);
     border-left: none;
     border-top: 1px solid #eee;
     order: 1;
