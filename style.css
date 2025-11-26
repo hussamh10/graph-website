@@ -8,19 +8,28 @@ body {
 }
 
 body {
-  margin: 3rem;
+  margin: clamp(1rem, 4vw, 3rem);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   color: #000000;
   background: #FEF7EB;
   display: flex;
   flex-direction: column;
-  
+  min-height: 100vh;
 }
 
 .site-header {
   font-size: 14px;
   font-family: "Helvetica Neue", Arial;
+  padding: 16px;
 }
+
+@media (max-width: 900px) {
+  .site-header {
+    padding: 0px 12px;
+    text-align: center;
+  }
+}
+
 
 .site-main {
   flex: 1;
@@ -31,13 +40,16 @@ body {
 
 #graph-container {
   flex: 1 1 auto;
-  max-height: 85vh;
+  max-height: none;
   min-width: 0;
-  min-height: 0;
+  min-height: clamp(560px, 74vh, 1300px);
   overflow: hidden;
   cursor: grab;
   position: relative;
   background-color: #FEF7EB;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 #graph-container.dragging {
@@ -59,13 +71,21 @@ body {
 }
 
 #graph {
-  width: 150%;
-  height: 150%;
-  transform: translate(0%, -25%);
+  width: 120%;
+  height: 120%;
+  transform: translate(-8%, -28%);
   shape-rendering: geometricPrecision;
   font-family: futura, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   position: relative;
   z-index: 1;
+}
+
+@media (max-width: 900px) {
+  #graph {
+    width: 250%;
+    height: 250%;
+    transform: translate(8%, -20%);
+  }
 }
 
 #detail-panel {
@@ -259,6 +279,56 @@ body {
   margin-bottom: 12px;
 }
 
+@media (max-width: 900px) {
+  body {
+    margin: 0;
+  }
+
+  .site-main {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  #graph-container {
+    max-height: none;
+    min-height: 36vh;
+    height: 36vh;
+    order: 0;
+  }
+
+  #detail-panel {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    max-height: none;
+    margin: 0;
+    padding: 18px;
+    border-left: none;
+    border-top: 1px solid #eee;
+    order: 1;
+  }
+
+  #detail-panel.detail-panel--plain {
+    border-top: none;
+    padding: 0;
+  }
+
+  #detail-panel-inner {
+    gap: 12px;
+  }
+
+  #detail-panel.detail-panel--markdown #detail-title {
+    padding: 0;
+  }
+
+  #detail-panel.detail-panel--markdown #detail-content,
+  #detail-panel.detail-panel--html #detail-content {
+    max-width: 100%;
+    padding: 0;
+  }
+}
+
 .graph-node {
   cursor: pointer;
 }
@@ -302,23 +372,23 @@ body {
 /* Labels */
 .node-label {
   fill: #222;
-  font-size: 14px;
+  font-size: 18px;
   dominant-baseline: hanging;
   text-anchor: middle;
   pointer-events: none;
   paint-order: stroke fill;
   stroke: #FEF7EB;
-  stroke-width: 5px;
+  stroke-width: 7px;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .node-with-image .node-label {
-  stroke-width: 6px;
+  stroke-width: 8px;
 }
 
 .node-label-arrow {
-  font-size: 0.65em;
+  font-size: 0.75em;
 }
 
 /* Small circles for "label" nodes */

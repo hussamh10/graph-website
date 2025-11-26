@@ -566,15 +566,15 @@ function initGraph(graphData) {
 
     switch (node.kind) {
       case "root":
-        return 18;
+        return 26;
       case "icon":
-        return 16;
+        return 22;
       case "doc":
-        return 18;
+        return 24;
       case "label":
-        return 14;
+        return 18;
       default:
-        return 12;
+        return 16;
     }
   }
 
@@ -719,7 +719,7 @@ function initGraph(graphData) {
       shapeGroup.appendChild(image);
       halfHeight = height / 2;
     } else if (node.kind === "root") {
-      const r = 14;
+      const r = 20;
       halfHeight = r;
       const circle = document.createElementNS(svgNS, "circle");
       circle.setAttribute("r", r);
@@ -727,7 +727,7 @@ function initGraph(graphData) {
       g.classList.add("node-root");
       shapeGroup.appendChild(circle);
     } else if (node.kind === "icon") {
-      const size = 22;
+      const size = 28;
       halfHeight = size / 2;
       const poly = document.createElementNS(svgNS, "polygon");
       let points;
@@ -743,8 +743,8 @@ function initGraph(graphData) {
       poly.setAttribute("fill", node.color || "#ddd");
       shapeGroup.appendChild(poly);
     } else if (node.kind === "doc") {
-      const w = 16;
-      const h = 20;
+      const w = 20;
+      const h = 26;
       halfHeight = h / 2;
 
       const rect = document.createElementNS(svgNS, "rect");
@@ -789,7 +789,7 @@ function initGraph(graphData) {
       line3.setAttribute("class", "doc-line");
       shapeGroup.appendChild(line3);
     } else if (node.kind === "label") {
-      const r = typeof node.radius === "number" ? node.radius : 10;
+      const r = typeof node.radius === "number" ? node.radius : 14;
       halfHeight = r;
       const circle = document.createElementNS(svgNS, "circle");
       circle.setAttribute("r", r);
@@ -813,8 +813,8 @@ function initGraph(graphData) {
       text.setAttribute("class", "node-label");
       text.setAttribute("text-anchor", "middle");
 
-      const baseY = halfHeight + 18;
-      const lineHeight = 16;
+      const baseY = halfHeight + 24;
+      const lineHeight = 18;
 
       lines.forEach((line, i) => {
         const tspan = document.createElementNS(svgNS, "tspan");
@@ -926,28 +926,46 @@ function initGraph(graphData) {
   let startY = 0;
   let currentX = 0;
   let currentY = 0;
+  let lastTapTime = 0;
+  let lastTapX = 0;
+  let lastTapY = 0;
 
-  // Center the root node initially
-  const rootNode = nodeById["root"];
-  if (rootNode) {
-    const containerRect = container.getBoundingClientRect();
-    const centerX = containerRect.width / 2;
-    const centerY = containerRect.height / 2;
-    
-    currentX = centerX - rootNode.x;
-    currentY = centerY - rootNode.y;
-  } else {
-    // Fallback if no root node
+  const DOUBLE_TAP_DELAY = 350;
+  const DOUBLE_TAP_DISTANCE = 30;
+
+  function getDefaultGraphOffset() {
+    const rootNode = nodeById["root"];
+    if (rootNode) {
+      const containerRect = container.getBoundingClientRect();
+      return {
+        x: containerRect.width / 2 - rootNode.x,
+        y: containerRect.height / 2 - rootNode.y,
+      };
+    }
+
+    if (graphData.nodes.length === 0) {
+      return { x: 0, y: 0 };
+    }
+
     const xValues = graphData.nodes.map((n) => n.x);
     const yValues = graphData.nodes.map((n) => n.y);
     const minX = Math.min(...xValues);
     const minY = Math.min(...yValues);
     const initialPadding = 40;
-    
-    currentX = initialPadding - minX;
-    currentY = initialPadding - minY;
+
+    return {
+      x: initialPadding - minX,
+      y: initialPadding - minY,
+    };
   }
-  rootGroup.setAttribute("transform", `translate(${currentX},${currentY})`);
+
+  function applyGraphOffset(offset) {
+    currentX = offset.x;
+    currentY = offset.y;
+    rootGroup.setAttribute("transform", `translate(${currentX},${currentY})`);
+  }
+
+  applyGraphOffset(getDefaultGraphOffset());
 
   function centerNode(nodeId, duration = 600) {
     const node = nodeById[nodeId];
@@ -986,8 +1004,43 @@ function initGraph(graphData) {
     requestAnimationFrame(animate);
   }
 
+  function resetGraphPosition({ animate = true } = {}) {
+    if (animate && nodeById["root"]) {
+      centerNode("root");
+      return;
+    }
+    applyGraphOffset(getDefaultGraphOffset());
+  }
+
+  function handleDoubleTap(e) {
+    if (e.pointerType !== "touch") {
+      return false;
+    }
+
+    const now = performance.now();
+    const timeDiff = now - lastTapTime;
+    const distance = Math.hypot(e.clientX - lastTapX, e.clientY - lastTapY);
+
+    if (timeDiff > 0 && timeDiff < DOUBLE_TAP_DELAY && distance < DOUBLE_TAP_DISTANCE) {
+      lastTapTime = 0;
+      resetGraphPosition();
+      return true;
+    }
+
+    lastTapTime = now;
+    lastTapX = e.clientX;
+    lastTapY = e.clientY;
+    return false;
+  }
+
   function pointerDown(e) {
-    if (e.button !== 0) return;
+    if (handleDoubleTap(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
+    if (e.pointerType !== "touch" && e.button !== 0) return;
 
     // Don't initiate panning when interacting with a node so that click events fire
     if (e.target.closest && e.target.closest(".graph-node")) {
@@ -999,6 +1052,7 @@ function initGraph(graphData) {
     startY = e.clientY;
     container.setPointerCapture(e.pointerId);
     container.classList.add("dragging");
+    e.preventDefault();
   }
 
   function pointerMove(e) {
@@ -1030,4 +1084,8 @@ function initGraph(graphData) {
   container.addEventListener("pointermove", pointerMove);
   container.addEventListener("pointerup", pointerUp);
   container.addEventListener("pointercancel", pointerUp);
+  container.addEventListener("dblclick", (event) => {
+    event.preventDefault();
+    resetGraphPosition();
+  });
 }

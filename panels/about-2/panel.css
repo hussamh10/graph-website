@@ -20,6 +20,9 @@
   font-family: "IBM Plex Mono", "SF Mono", Menlo, monospace;
   line-height: 1.4;
   transform: rotate(-1deg);
+  @media (max-width: 700px) {
+    transform: none;
+  }
   transform-origin: top center;
 }
 
@@ -113,6 +116,13 @@
   object-fit: contain;
   margin: 0 auto 6px;
   filter: saturate(0.85);
+}
+
+@media (max-width: 900px) {
+  .passport-panel__school img {
+    width: 40px;
+    height: 30px;
+  }
 }
 
 .passport-panel__school-year {
