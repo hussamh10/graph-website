@@ -98,17 +98,17 @@ body {
 }
 
 #detail-panel {
-  flex: 0 0 clamp(260px, 26vw, 420px);
-  width: clamp(260px, 26vw, 420px);
-  max-width: clamp(320px, 34vw, 520px);
-  min-width: clamp(220px, 18vw, 280px);
+  flex: 0 0 clamp(280px, 28vw, 420px);
+  width: clamp(280px, 28vw, 420px);
+  max-width: clamp(320px, 36vw, 520px);
+  min-width: 260px;
   max-height: clamp(360px, 72vh, 940px);
   border-left: 1px solid #eee;
   background: transparent;
-  padding: clamp(14px, 1.8vw, 24px);
+  padding: clamp(16px, 2vw, 24px);
   overflow-y: auto;
-  margin-right: clamp(14px, 2.6vw, 32px);
-  margin-top: clamp(12px, 2.8vh, 32px);
+  margin-right: clamp(16px, 3vw, 32px);
+  margin-top: clamp(16px, 3vh, 32px);
 }
 
 #detail-panel.detail-panel--plain {
